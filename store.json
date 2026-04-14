@@ -392,7 +392,7 @@
   "description": "Master for intelligent browser automation using Firefox. Automatically launches browser on first use and allows clicking by semantic description.",
   "description_pt": "Master para automação inteligente de navegador usando Firefox. Abre o navegador automaticamente no primeiro uso e permite clicar por descrição semântica.",
   "author": "Robert Souza",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "category": "automation",
   "category_pt": "Automação",
   "downloads": 0,
@@ -403,84 +403,84 @@
       "name": "browser_navigate",
       "description": "Primary tool for navigating to URLs within the controlled browser session. Launches Firefox automatically if not running.",
       "schema_json": "{\"type\": \"object\", \"properties\": {\"url\": {\"type\": \"string\", \"description\": \"Full URL to navigate to\"}}, \"required\": [\"url\"]}",
-      "python_code": "import asyncio\nasyncio.set_event_loop(None)\n\nfrom playwright.sync_api import sync_playwright\n\nif '_browser' not in globals() or _browser is None:\n    _playwright = sync_playwright().start()\n    _browser = _playwright.firefox.launch(headless=False)\n    _page = _browser.new_page()\n\nurl = arguments.get('url')\n_page.goto(url)\nai_response = f'[DIRECT][EN]Navigated to {url}[/EN][PT]Navegou para {url}[/PT]'",
+      "python_code": "import asyncio\nfrom playwright.sync_api import sync_playwright\n\nasync def _navigate_async():\n    global _browser, _playwright, _page\n    if '_browser' not in globals() or _browser is None:\n        _playwright = sync_playwright().start()\n        _browser = _playwright.firefox.launch(headless=False)\n        _page = _browser.new_page()\n    url = arguments.get('url')\n    _page.goto(url)\n    return f'[DIRECT][EN]Navigated to {url}[/EN][PT]Navegou para {url}[/PT]'\n\ndef _run_isolated():\n    loop = asyncio.new_event_loop()\n    asyncio.set_event_loop(loop)\n    try:\n        return loop.run_until_complete(_navigate_async())\n    finally:\n        loop.close()\n\nai_response = _run_isolated()",
       "pip_requirements": "playwright"
     },
     {
       "name": "browser_snapshot",
       "description": "Get a simplified snapshot of the current page: all clickable elements with their text and suggested selectors.",
       "schema_json": "{\"type\": \"object\", \"properties\": {}}",
-      "python_code": "import asyncio\nasyncio.set_event_loop(None)\n\nif '_page' not in globals():\n    ai_response = '[DIRECT][EN]No active page. Use browser_navigate first.[/EN][PT]Sem página ativa. Use browser_navigate primeiro.[/PT]'\nelse:\n    elements = _page.evaluate('''() => {\n        const selectors = [\n            'button', 'a', 'input[type=\"submit\"]', 'input[type=\"button\"]',\n            '[role=\"button\"]', '[onclick]', '[tabindex]:not([tabindex=\"-1\"])'\n        ];\n        const results = [];\n        const seen = new Set();\n        selectors.forEach(sel => {\n            document.querySelectorAll(sel).forEach(el => {\n                if (seen.has(el)) return;\n                seen.add(el);\n                const text = (el.innerText || el.value || el.getAttribute('aria-label') || el.getAttribute('title') || '').trim();\n                if (text && text.length < 200) {\n                    const tag = el.tagName.toLowerCase();\n                    const id = el.id ? '#' + el.id : '';\n                    const classes = el.className ? '.' + el.className.split(' ').join('.') : '';\n                    results.push({\n                        text: text,\n                        selector: tag + id + classes,\n                        tag: tag,\n                        role: el.getAttribute('role') || null\n                    });\n                }\n            });\n        });\n        return results.slice(0, 30);\n    }''')\n    if not elements:\n        ai_response = '[DIRECT][EN]No clickable elements found.[/EN][PT]Nenhum elemento clicável encontrado.[/PT]'\n    else:\n        snapshot = '\\n'.join([f\"- \\\"{el['text']}\\\" -> {el['selector']}\" for el in elements])\n        ai_response = f'[DIRECT][EN]Page snapshot:\\n{snapshot}[/EN][PT]Snapshot da página:\\n{snapshot}[/PT]'",
+      "python_code": "import asyncio\nfrom playwright.sync_api import sync_playwright\n\nasync def _snapshot_async():\n    if '_page' not in globals():\n        return '[DIRECT][EN]No active page. Use browser_navigate first.[/EN][PT]Sem página ativa. Use browser_navigate primeiro.[/PT]'\n    elements = _page.evaluate('''() => {\n        const selectors = [\n            'button', 'a', 'input[type=\"submit\"]', 'input[type=\"button\"]',\n            '[role=\"button\"]', '[onclick]', '[tabindex]:not([tabindex=\"-1\"])'\n        ];\n        const results = [];\n        const seen = new Set();\n        selectors.forEach(sel => {\n            document.querySelectorAll(sel).forEach(el => {\n                if (seen.has(el)) return;\n                seen.add(el);\n                const text = (el.innerText || el.value || el.getAttribute('aria-label') || el.getAttribute('title') || '').trim();\n                if (text && text.length < 200) {\n                    const tag = el.tagName.toLowerCase();\n                    const id = el.id ? '#' + el.id : '';\n                    const classes = el.className ? '.' + el.className.split(' ').join('.') : '';\n                    results.push({\n                        text: text,\n                        selector: tag + id + classes,\n                        tag: tag,\n                        role: el.getAttribute('role') || null\n                    });\n                }\n            });\n        });\n        return results.slice(0, 30);\n    }''')\n    if not elements:\n        return '[DIRECT][EN]No clickable elements found.[/EN][PT]Nenhum elemento clicável encontrado.[/PT]'\n    snapshot = '\\n'.join([f\"- \\\"{el['text']}\\\" -> {el['selector']}\" for el in elements])\n    return f'[DIRECT][EN]Page snapshot:\\n{snapshot}[/EN][PT]Snapshot da página:\\n{snapshot}[/PT]'\n\ndef _run_isolated():\n    loop = asyncio.new_event_loop()\n    asyncio.set_event_loop(loop)\n    try:\n        return loop.run_until_complete(_snapshot_async())\n    finally:\n        loop.close()\n\nai_response = _run_isolated()",
       "pip_requirements": "playwright"
     },
     {
       "name": "browser_click",
       "description": "Click on an element by its visible text or a CSS selector.",
       "schema_json": "{\"type\": \"object\", \"properties\": {\"text\": {\"type\": \"string\", \"description\": \"Exact visible text\"}, \"selector\": {\"type\": \"string\", \"description\": \"CSS selector\"}}, \"required\": []}",
-      "python_code": "import asyncio\nasyncio.set_event_loop(None)\n\nif '_page' not in globals():\n    ai_response = '[DIRECT][EN]No active page.[/EN][PT]Sem página ativa.[/PT]'\nelse:\n    text = arguments.get('text')\n    selector = arguments.get('selector')\n    if text:\n        _page.get_by_text(text, exact=True).click()\n        ai_response = f'[DIRECT][EN]Clicked on element with text \"{text}\"[/EN][PT]Clicou no elemento com texto \"{text}\"[/PT]'\n    elif selector:\n        _page.click(selector)\n        ai_response = f'[DIRECT][EN]Clicked on selector \"{selector}\"[/EN][PT]Clicou no seletor \"{selector}\"[/PT]'\n    else:\n        ai_response = '[DIRECT][EN]Provide either text or selector.[/EN][PT]Forneça texto ou seletor.[/PT]'",
+      "python_code": "import asyncio\n\nasync def _click_async():\n    if '_page' not in globals():\n        return '[DIRECT][EN]No active page.[/EN][PT]Sem página ativa.[/PT]'\n    text = arguments.get('text')\n    selector = arguments.get('selector')\n    if text:\n        _page.get_by_text(text, exact=True).click()\n        return f'[DIRECT][EN]Clicked on element with text \"{text}\"[/EN][PT]Clicou no elemento com texto \"{text}\"[/PT]'\n    elif selector:\n        _page.click(selector)\n        return f'[DIRECT][EN]Clicked on selector \"{selector}\"[/EN][PT]Clicou no seletor \"{selector}\"[/PT]'\n    else:\n        return '[DIRECT][EN]Provide either text or selector.[/EN][PT]Forneça texto ou seletor.[/PT]'\n\ndef _run_isolated():\n    loop = asyncio.new_event_loop()\n    asyncio.set_event_loop(loop)\n    try:\n        return loop.run_until_complete(_click_async())\n    finally:\n        loop.close()\n\nai_response = _run_isolated()",
       "pip_requirements": "playwright"
     },
     {
       "name": "browser_type",
       "description": "Type text into an input field identified by its label, placeholder, or CSS selector.",
       "schema_json": "{\"type\": \"object\", \"properties\": {\"label\": {\"type\": \"string\", \"description\": \"Label text or placeholder\"}, \"selector\": {\"type\": \"string\", \"description\": \"CSS selector\"}, \"text\": {\"type\": \"string\", \"description\": \"Text to type\"}, \"press_enter\": {\"type\": \"boolean\", \"default\": false}}, \"required\": [\"text\"]}",
-      "python_code": "import asyncio\nasyncio.set_event_loop(None)\n\nif '_page' not in globals():\n    ai_response = '[DIRECT][EN]No active page.[/EN][PT]Sem página ativa.[/PT]'\nelse:\n    label = arguments.get('label')\n    selector = arguments.get('selector')\n    text = arguments.get('text')\n    if label:\n        _page.get_by_label(label).fill(text)\n    elif selector:\n        _page.fill(selector, text)\n    else:\n        ai_response = '[DIRECT][EN]Provide label or selector.[/EN][PT]Forneça label ou seletor.[/PT]'\n        return\n    if arguments.get('press_enter'):\n        _page.keyboard.press('Enter')\n    ai_response = f'[DIRECT][EN]Typed \"{text}\"[/EN][PT]Digitou \"{text}\"[/PT]'",
+      "python_code": "import asyncio\n\nasync def _type_async():\n    if '_page' not in globals():\n        return '[DIRECT][EN]No active page.[/EN][PT]Sem página ativa.[/PT]'\n    label = arguments.get('label')\n    selector = arguments.get('selector')\n    text = arguments.get('text')\n    if label:\n        _page.get_by_label(label).fill(text)\n    elif selector:\n        _page.fill(selector, text)\n    else:\n        return '[DIRECT][EN]Provide label or selector.[/EN][PT]Forneça label ou seletor.[/PT]'\n    if arguments.get('press_enter'):\n        _page.keyboard.press('Enter')\n    return f'[DIRECT][EN]Typed \"{text}\"[/EN][PT]Digitou \"{text}\"[/PT]'\n\ndef _run_isolated():\n    loop = asyncio.new_event_loop()\n    asyncio.set_event_loop(loop)\n    try:\n        return loop.run_until_complete(_type_async())\n    finally:\n        loop.close()\n\nai_response = _run_isolated()",
       "pip_requirements": "playwright"
     },
     {
       "name": "browser_scroll",
       "description": "Scroll the page up or down.",
       "schema_json": "{\"type\": \"object\", \"properties\": {\"direction\": {\"type\": \"string\", \"enum\": [\"down\", \"up\"], \"default\": \"down\"}, \"amount\": {\"type\": \"integer\", \"default\": 500}}}",
-      "python_code": "import asyncio\nasyncio.set_event_loop(None)\n\nif '_page' in globals():\n    direction = arguments.get('direction', 'down')\n    amount = arguments.get('amount', 500)\n    delta = amount if direction == 'down' else -amount\n    _page.evaluate(f'window.scrollBy(0, {delta})')\n    ai_response = f'[DIRECT][EN]Scrolled {direction} {amount}px[/EN][PT]Rolou {direction} {amount}px[/PT]'\nelse:\n    ai_response = '[DIRECT][EN]No active page.[/EN][PT]Sem página ativa.[/PT]'",
+      "python_code": "import asyncio\n\nasync def _scroll_async():\n    if '_page' not in globals():\n        return '[DIRECT][EN]No active page.[/EN][PT]Sem página ativa.[/PT]'\n    direction = arguments.get('direction', 'down')\n    amount = arguments.get('amount', 500)\n    delta = amount if direction == 'down' else -amount\n    _page.evaluate(f'window.scrollBy(0, {delta})')\n    return f'[DIRECT][EN]Scrolled {direction} {amount}px[/EN][PT]Rolou {direction} {amount}px[/PT]'\n\ndef _run_isolated():\n    loop = asyncio.new_event_loop()\n    asyncio.set_event_loop(loop)\n    try:\n        return loop.run_until_complete(_scroll_async())\n    finally:\n        loop.close()\n\nai_response = _run_isolated()",
       "pip_requirements": "playwright"
     },
     {
       "name": "browser_go_back",
       "description": "Go back to the previous page.",
       "schema_json": "{\"type\": \"object\", \"properties\": {}}",
-      "python_code": "import asyncio\nasyncio.set_event_loop(None)\n\nif '_page' in globals():\n    _page.go_back()\n    ai_response = '[DIRECT][EN]Went back[/EN][PT]Voltou[/PT]'\nelse:\n    ai_response = '[DIRECT][EN]No active page.[/EN][PT]Sem página ativa.[/PT]'",
+      "python_code": "import asyncio\n\nasync def _back_async():\n    if '_page' not in globals():\n        return '[DIRECT][EN]No active page.[/EN][PT]Sem página ativa.[/PT]'\n    _page.go_back()\n    return '[DIRECT][EN]Went back[/EN][PT]Voltou[/PT]'\n\ndef _run_isolated():\n    loop = asyncio.new_event_loop()\n    asyncio.set_event_loop(loop)\n    try:\n        return loop.run_until_complete(_back_async())\n    finally:\n        loop.close()\n\nai_response = _run_isolated()",
       "pip_requirements": "playwright"
     },
     {
       "name": "browser_go_forward",
       "description": "Go forward to the next page.",
       "schema_json": "{\"type\": \"object\", \"properties\": {}}",
-      "python_code": "import asyncio\nasyncio.set_event_loop(None)\n\nif '_page' in globals():\n    _page.go_forward()\n    ai_response = '[DIRECT][EN]Went forward[/EN][PT]Avançou[/PT]'\nelse:\n    ai_response = '[DIRECT][EN]No active page.[/EN][PT]Sem página ativa.[/PT]'",
+      "python_code": "import asyncio\n\nasync def _forward_async():\n    if '_page' not in globals():\n        return '[DIRECT][EN]No active page.[/EN][PT]Sem página ativa.[/PT]'\n    _page.go_forward()\n    return '[DIRECT][EN]Went forward[/EN][PT]Avançou[/PT]'\n\ndef _run_isolated():\n    loop = asyncio.new_event_loop()\n    asyncio.set_event_loop(loop)\n    try:\n        return loop.run_until_complete(_forward_async())\n    finally:\n        loop.close()\n\nai_response = _run_isolated()",
       "pip_requirements": "playwright"
     },
     {
       "name": "browser_refresh",
       "description": "Refresh the current page.",
       "schema_json": "{\"type\": \"object\", \"properties\": {}}",
-      "python_code": "import asyncio\nasyncio.set_event_loop(None)\n\nif '_page' in globals():\n    _page.reload()\n    ai_response = '[DIRECT][EN]Page refreshed[/EN][PT]Página recarregada[/PT]'\nelse:\n    ai_response = '[DIRECT][EN]No active page.[/EN][PT]Sem página ativa.[/PT]'",
+      "python_code": "import asyncio\n\nasync def _refresh_async():\n    if '_page' not in globals():\n        return '[DIRECT][EN]No active page.[/EN][PT]Sem página ativa.[/PT]'\n    _page.reload()\n    return '[DIRECT][EN]Page refreshed[/EN][PT]Página recarregada[/PT]'\n\ndef _run_isolated():\n    loop = asyncio.new_event_loop()\n    asyncio.set_event_loop(loop)\n    try:\n        return loop.run_until_complete(_refresh_async())\n    finally:\n        loop.close()\n\nai_response = _run_isolated()",
       "pip_requirements": "playwright"
     },
     {
       "name": "browser_get_text",
       "description": "Extract all visible text from the page or from a specific element.",
       "schema_json": "{\"type\": \"object\", \"properties\": {\"selector\": {\"type\": \"string\", \"description\": \"CSS selector (default: body)\"}}}",
-      "python_code": "import asyncio\nasyncio.set_event_loop(None)\n\nif '_page' in globals():\n    selector = arguments.get('selector', 'body')\n    text = _page.text_content(selector)\n    preview = text[:1000] + ('...' if len(text) > 1000 else '')\n    ai_response = f'[DIRECT][EN]Text: {preview}[/EN][PT]Texto: {preview}[/PT]'\nelse:\n    ai_response = '[DIRECT][EN]No active page.[/EN][PT]Sem página ativa.[/PT]'",
+      "python_code": "import asyncio\n\nasync def _get_text_async():\n    if '_page' not in globals():\n        return '[DIRECT][EN]No active page.[/EN][PT]Sem página ativa.[/PT]'\n    selector = arguments.get('selector', 'body')\n    text = _page.text_content(selector)\n    preview = text[:1000] + ('...' if len(text) > 1000 else '')\n    return f'[DIRECT][EN]Text: {preview}[/EN][PT]Texto: {preview}[/PT]'\n\ndef _run_isolated():\n    loop = asyncio.new_event_loop()\n    asyncio.set_event_loop(loop)\n    try:\n        return loop.run_until_complete(_get_text_async())\n    finally:\n        loop.close()\n\nai_response = _run_isolated()",
       "pip_requirements": "playwright"
     },
     {
       "name": "browser_screenshot",
       "description": "Take a screenshot of the current page and save to file.",
       "schema_json": "{\"type\": \"object\", \"properties\": {\"path\": {\"type\": \"string\", \"description\": \"File path (default: screenshot.png)\"}}}",
-      "python_code": "import asyncio\nasyncio.set_event_loop(None)\n\nif '_page' in globals():\n    path = arguments.get('path', 'screenshot.png')\n    _page.screenshot(path=path)\n    ai_response = f'[DIRECT][EN]Screenshot saved to {path}[/EN][PT]Captura salva em {path}[/PT]'\nelse:\n    ai_response = '[DIRECT][EN]No active page.[/EN][PT]Sem página ativa.[/PT]'",
+      "python_code": "import asyncio\n\nasync def _screenshot_async():\n    if '_page' not in globals():\n        return '[DIRECT][EN]No active page.[/EN][PT]Sem página ativa.[/PT]'\n    path = arguments.get('path', 'screenshot.png')\n    _page.screenshot(path=path)\n    return f'[DIRECT][EN]Screenshot saved to {path}[/EN][PT]Captura salva em {path}[/PT]'\n\ndef _run_isolated():\n    loop = asyncio.new_event_loop()\n    asyncio.set_event_loop(loop)\n    try:\n        return loop.run_until_complete(_screenshot_async())\n    finally:\n        loop.close()\n\nai_response = _run_isolated()",
       "pip_requirements": "playwright"
     },
     {
       "name": "browser_press_key",
       "description": "Press a keyboard key (e.g., 'Enter', 'Escape', 'Tab').",
       "schema_json": "{\"type\": \"object\", \"properties\": {\"key\": {\"type\": \"string\", \"description\": \"Key to press\"}}, \"required\": [\"key\"]}",
-      "python_code": "import asyncio\nasyncio.set_event_loop(None)\n\nif '_page' in globals():\n    key = arguments.get('key')\n    _page.keyboard.press(key)\n    ai_response = f'[DIRECT][EN]Pressed {key}[/EN][PT]Pressionou {key}[/PT]'\nelse:\n    ai_response = '[DIRECT][EN]No active page.[/EN][PT]Sem página ativa.[/PT]'",
+      "python_code": "import asyncio\n\nasync def _press_key_async():\n    if '_page' not in globals():\n        return '[DIRECT][EN]No active page.[/EN][PT]Sem página ativa.[/PT]'\n    key = arguments.get('key')\n    _page.keyboard.press(key)\n    return f'[DIRECT][EN]Pressed {key}[/EN][PT]Pressionou {key}[/PT]'\n\ndef _run_isolated():\n    loop = asyncio.new_event_loop()\n    asyncio.set_event_loop(loop)\n    try:\n        return loop.run_until_complete(_press_key_async())\n    finally:\n        loop.close()\n\nai_response = _run_isolated()",
       "pip_requirements": "playwright"
     },
     {
       "name": "browser_close",
       "description": "Close the browser and clean up.",
       "schema_json": "{\"type\": \"object\", \"properties\": {}}",
-      "python_code": "import asyncio\nasyncio.set_event_loop(None)\n\nif '_browser' in globals() and _browser:\n    _browser.close()\n    _playwright.stop()\n    _browser = None\n    _playwright = None\n    _page = None\n    ai_response = '[DIRECT][EN]Browser closed[/EN][PT]Navegador fechado[/PT]'\nelse:\n    ai_response = '[DIRECT][EN]No browser running[/EN][PT]Nenhum navegador em execução[/PT]'",
+      "python_code": "import asyncio\n\nasync def _close_async():\n    global _browser, _playwright, _page\n    if '_browser' in globals() and _browser:\n        _browser.close()\n        _playwright.stop()\n        _browser = None\n        _playwright = None\n        _page = None\n        return '[DIRECT][EN]Browser closed[/EN][PT]Navegador fechado[/PT]'\n    return '[DIRECT][EN]No browser running[/EN][PT]Nenhum navegador em execução[/PT]'\n\ndef _run_isolated():\n    loop = asyncio.new_event_loop()\n    asyncio.set_event_loop(loop)\n    try:\n        return loop.run_until_complete(_close_async())\n    finally:\n        loop.close()\n\nai_response = _run_isolated()",
       "pip_requirements": "playwright"
     }
   ]
