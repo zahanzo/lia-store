@@ -389,10 +389,10 @@
   "id": "browser_control",
   "name": "Browser Control",
   "name_pt": "Controle de Navegador",
-  "description": "Master for intelligent browser automation. Automatically launches browser on first use and allows clicking by semantic description.",
-  "description_pt": "Master para automação inteligente de navegador. Abre o navegador automaticamente no primeiro uso e permite clicar por descrição semântica.",
+  "description": "Master for intelligent browser automation. Automatically launches Firefox on first use and allows clicking by semantic description. Prefer this master's tools for any interactive web task.",
+  "description_pt": "Master para automação inteligente de navegador. Abre o Firefox automaticamente no primeiro uso e permite clicar por descrição semântica. Prefira as ferramentas deste mestre para qualquer tarefa interativa na web.",
   "author": "Robert Souza",
-  "version": "0.0.3",
+  "version": "0.0.5",
   "category": "automation",
   "category_pt": "Automação",
   "downloads": 0,
@@ -401,9 +401,9 @@
   "tools": [
     {
       "name": "browser_navigate",
-      "description": "Navigate to a URL. Launches browser automatically if not running.",
+      "description": "Primary tool for navigating to URLs within the controlled browser session. Use this when you need to interact with the page (click, type, scroll) after loading. Launches Firefox automatically if not running.",
       "schema_json": "{\"type\": \"object\", \"properties\": {\"url\": {\"type\": \"string\", \"description\": \"Full URL to navigate to\"}}, \"required\": [\"url\"]}",
-      "python_code": "from playwright.sync_api import sync_playwright\n\nif '_browser' not in globals() or _browser is None:\n    _playwright = sync_playwright().start()\n    _browser = _playwright.chromium.launch(headless=False)\n    _page = _browser.new_page()\n\nurl = arguments.get('url')\n_page.goto(url)\nai_response = f'[DIRECT][EN]Navigated to {url}[/EN][PT]Navegou para {url}[/PT]'",
+      "python_code": "from playwright.sync_api import sync_playwright\n\nif '_browser' not in globals() or _browser is None:\n    _playwright = sync_playwright().start()\n    _browser = _playwright.firefox.launch(headless=False)\n    _page = _browser.new_page()\n\nurl = arguments.get('url')\n_page.goto(url)\nai_response = f'[DIRECT][EN]Navigated to {url}[/EN][PT]Navegou para {url}[/PT]'",
       "pip_requirements": "playwright"
     },
     {
