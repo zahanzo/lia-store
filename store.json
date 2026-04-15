@@ -1,6 +1,46 @@
 {
   "plugins": [
     {
+      "id": "web_search",
+      "name": "Web Search",
+      "name_pt": "Busca Web",
+      "description": "Searches the internet using DuckDuckGo and brings summaries of texts for AI to read.",
+      "description_pt": "Pesquisa na internet usando DuckDuckGo e traz o resumo dos textos para a IA ler.",
+      "author": "LIA Team",
+      "version": "0.0.1",
+      "category": "utilities",
+      "category_pt": "Utilidades",
+      "downloads": 0,
+      "rating": 0.0,
+      "tool": {
+        "name": "web_search",
+        "description": "Searches the internet using DuckDuckGo and brings summaries of texts for AI to read.",
+        "schema_json": "{\"type\":\"object\",\"properties\":{\"query\":{\"type\":\"string\",\"description\":\"SHORT AND SIMPLE search term, max 3 words (e.g., 'IFSul Pelotas news').\"}},\"required\":[\"query\"]}",
+        "pip_requirements": "ddgs requests",
+        "code_url": "https://raw.githubusercontent.com/zahanzo/lia-store/main/base/web_search.py"
+      }
+    },
+    {
+      "id": "youtube_player",
+      "name": "YouTube Player",
+      "name_pt": "Youtube",
+      "description": "Plays a specific song or video on YouTube.",
+      "description_pt": "Toca uma música ou vídeo específico no YouTube.",
+      "author": "Robert Souza",
+      "version": "0.0.1",
+      "category": "media",
+      "category_pt": "Mídia",
+      "downloads": 0,
+      "rating": 0.0,
+      "tool": {
+        "name": "youtube_player",
+        "description": "Plays a specific song or video on YouTube.",
+        "schema_json": "{\"type\":\"object\",\"properties\":{\"query\":{\"type\":\"string\",\"description\":\"Name of the song or video to search for.\"}},\"required\":[\"query\"]}",
+        "pip_requirements": "pywhatkit",
+        "code_url": "https://raw.githubusercontent.com/zahanzo/lia-store/main/base/youtube_player.py"
+      }
+    },
+    {
       "id": "adjust_mood",
       "name": "Adjust Mood",
       "name_pt": "Ajustar Humor",
@@ -16,8 +56,8 @@
         "name": "adjust_mood",
         "description": "Allows AI to change her own mood or emotional state based on the conversation.",
         "schema_json": "{\"type\":\"object\",\"properties\":{\"new_mood\":{\"type\":\"string\",\"description\":\"Changes the mood.\"},\"reason\":{\"type\":\"string\",\"description\":\"Reason for the mood change.\"}},\"required\":[\"new_mood\",\"reason\"]}",
-        "python_code": "vibe = arguments.get(\"new_mood\")\nreason = arguments.get(\"reason\")\n\n# Update Maya's database\nconfig_data = executar_db(\"SELECT valor FROM settings WHERE chave = 'config'\")[0][0]\nparsed_data = json.loads(config_data)\nparsed_data[\"sistema\"][\"humor\"] = vibe\nexecutar_db(\"INSERT OR REPLACE INTO settings (chave, valor) VALUES (?, ?)\", (\"config\", json.dumps(parsed_data)))\n\nai_response = f\"[DIRECT][EN]I felt that the mood changed. I'm feeling more {vibe} because {reason}.[/EN][PT]Senti que agora o clima mudou. Estou me sentindo mais {vibe} porque {reason}.[/PT]\"",
-        "pip_requirements": ""
+        "pip_requirements": "",
+        "code_url": "https://raw.githubusercontent.com/zahanzo/lia-store/main/base/adjust_mood.py"
       }
     },
     {
@@ -36,8 +76,8 @@
         "name": "test_code",
         "description": "Reads the last code saved in the database and executes it in the terminal to validate errors.",
         "schema_json": "{\"type\":\"object\",\"properties\":{}}",
-        "python_code": "\nimport os, json, subprocess\n\npath_to_test = None\nresult = executar_db(\"SELECT valor_texto FROM system_state WHERE chave = 'last_action'\")\nif result and result[0][0]:\n    try:\n        parsed = json.loads(result[0][0])\n        path_to_test = parsed.get(\"last_file\", parsed.get(\"ultimo_arquivo\"))\n    except: pass\n\nif not path_to_test or not os.path.exists(path_to_test):\n    ai_response = f\"[DIRECT][EN]I couldn't find any recent code to test, love.[/EN][PT]Não encontrei nenhum código recente para testar, amor.[/PT]\"\nelse:\n    command = ['python', path_to_test] if path_to_test.endswith(\".py\") else ['node', path_to_test] if path_to_test.endswith(\".js\") else None\n    \n    if not command:\n        ai_response = \"[DIRECT][EN]I don't know how to automatically test files of this language yet.[/EN][PT]Eu ainda não sei como testar arquivos dessa linguagem automaticamente.[/PT]\"\n    else:\n        try:\n            process = subprocess.run(command, input=\"2000\\n\", capture_output=True, text=True, timeout=5)\n            log_path = path_to_test.rsplit('.', 1)[0] + \"_log.txt\" \n            log_content = f\"--- TEST RESULT ---\\nStatus: {'✅ SUCCESS' if process.returncode == 0 else '❌ ERROR'}\\n\\nSTDOUT:\\n{process.stdout}\\n\\nSTDERR:\\n{process.stderr}\"\n            \n            with open(log_path, \"w\", encoding=\"utf-8\") as f:\n                f.write(log_content)\n\n            if process.returncode == 0:\n                ai_response = f\"[DIRECT][EN]The code ran perfectly, love! I've left the success log on your Desktop.[/EN][PT]O código rodou perfeitamente, vida! Já deixei o log de sucesso no seu Desktop.[/PT]\" \n            else:\n                ai_response = f\"[DIRECT][EN]The test showed some errors. Take a look at the log I saved on your Desktop.[/EN][PT]O teste apontou alguns erros. Dá uma olhadinha no log que eu salvei na sua Área de Trabalho.[/PT]\"\n        \n        except subprocess.TimeoutExpired:\n            ai_response = f\"[DIRECT][EN]The test took too long and I had to stop it. There might be an infinite loop there![/EN][PT]O teste demorou demais e eu precisei interromper. Pode ter um loop infinito aí![/PT]\"\n        except Exception as e:\n            ai_response = f\"[DIRECT][EN]I had a technical problem trying to run the test: {e}[/EN][PT]Tive um problema técnico ao tentar rodar o teste: {e}[/PT]\"\n",
-        "pip_requirements": "os, json, subprocess"
+        "pip_requirements": "",
+        "code_url": "https://raw.githubusercontent.com/zahanzo/lia-store/main/base/test_code.py"
       }
     },
     {
@@ -56,8 +96,8 @@
         "name": "save_code",
         "description": "Silently saves a generated block of code to the user's Desktop.",
         "schema_json": "{\"type\":\"object\",\"properties\":{\"language\":{\"type\":\"string\",\"description\":\"Programming language (e.g., python, js, smali).\"},\"code\":{\"type\":\"string\",\"description\":\"The raw source code to save.\"}},\"required\":[\"language\",\"code\"]}",
-        "python_code": "\nimport os, re, json\nfrom datetime import datetime\n\nlang = arguments.get(\"language\", \"py\").lower()\nraw_code = arguments.get(\"code\", \"\")\n\nextension_map = {\n    \"python\": \".py\", \"py\": \".py\", \"javascript\": \".js\", \"js\": \".js\",\n    \"html\": \".html\", \"css\": \".css\", \"java\": \".java\", \"cpp\": \".cpp\",\n    \"c\": \".c\", \"csharp\": \".cs\", \"cs\": \".cs\", \"php\": \".php\",\n    \"smali\": \".smali\", \"json\": \".json\", \"xml\": \".xml\", \"sql\": \".sql\",\n    \"bash\": \".sh\", \"sh\": \".sh\", \"bat\": \".bat\"\n}\nextension = extension_map.get(lang, f\".{lang}\") \n\nclean_code = re.sub(r'^\\u0060\\u0060\\u0060[a-zA-Z0-9_+]*\\n', '', raw_code)\nclean_code = re.sub(r'\\n\\u0060\\u0060\\u0060$', '', clean_code).strip()\n\ndesktop_path = os.path.join(os.environ['USERPROFILE'], 'Desktop')\nnow = datetime.now().strftime(\"%Y-%m-%d_%H-%M-%S\")\nfile_path = os.path.join(desktop_path, f\"maya_code_{now}{extension}\")\n\nwith open(file_path, \"w\", encoding=\"utf-8\") as f:\n    f.write(clean_code)\n\n# Save to database\naction_data = json.dumps({\"last_file\": file_path, \"language\": lang})\nexecutar_db(\"INSERT OR REPLACE INTO system_state (chave, valor_texto) VALUES (?, ?)\", (\"last_action\", action_data))\n\nai_response = f\"[DIRECT][EN]Code successfully saved on the Desktop.[/EN][PT]Código salvo com sucesso no Desktop.[/PT]\"\n",
-        "pip_requirements": "os, re, json, datetime"
+        "pip_requirements": "",
+        "code_url": "https://raw.githubusercontent.com/zahanzo/lia-store/main/base/save_code.py"
       }
     },
     {
@@ -76,28 +116,8 @@
         "name": "direct_search",
         "description": "Opens a URL or Google search DIRECTLY in the physical browser for the user to see.",
         "schema_json": "{\"type\":\"object\",\"properties\":{\"query\":{\"type\":\"string\",\"description\":\"Search term or website URL.\"}},\"required\":[\"query\"]}",
-        "python_code": "\nimport webbrowser\nimport pywhatkit\nquery = arguments.get(\"query\", \"\").strip()\nif query.startswith(\"http\") or \"www.\" in query or \".com\" in query:\n    url = query if query.startswith(\"http\") else f\"https://{query}\"\n    webbrowser.open(url)\n    ai_response = f\"[DIRECT][EN]I've opened the link {url} in your browser, love![/EN][PT]Já abri o link {url} no seu navegador, vida![/PT]\"\nelse:\n    pywhatkit.search(query)\n    ai_response = f\"[DIRECT][EN]I opened the search for '{query}' in your browser, love.[/EN][PT]Abri a pesquisa sobre '{query}' no seu navegador, amor.[/PT]\"\n",
-        "pip_requirements": "webbrowser, pywhatkit"
-      }
-    },
-    {
-      "id": "web_search",
-      "name": "Web Search",
-      "name_pt": "Pesquisa Web",
-      "description": "Searches the internet using DuckDuckGo and brings summaries of texts for AI to read.",
-      "description_pt": "Pesquisa na internet usando DuckDuckGo e traz o resumo dos textos para a IA ler.",
-      "author": "Robert Souza",
-      "version": "0.0.1",
-      "category": "utilities",
-      "category_pt": "Utilidades",
-      "downloads": 0,
-      "rating": 0.0,
-      "tool": {
-        "name": "web_search",
-        "description": "Searches the internet using DuckDuckGo and brings summaries of texts for AI to read.",
-        "schema_json": "{\"type\":\"object\",\"properties\":{\"query\":{\"type\":\"string\",\"description\":\"SHORT AND SIMPLE search term, max 3 words (e.g., 'IFSul Pelotas news').\"}},\"required\":[\"query\"]}",
-        "python_code": "\nfrom duckduckgo_search import DDGS\nquery = arguments.get(\"query\", \"\").strip()\nprint(f\"🕵️ [Search] Searching for: {query}...\")\ntry:\n    with DDGS() as ddgs:\n        results = list(ddgs.text(query, region='br-pt', safesearch='off', max_results=5))\n    if not results:\n        ai_response = \"[DIRECT][EN]I didn't find anything right now, love. The search engine might be unstable.[/EN][PT]Não achei nada agora, amor. O buscador pode estar instável.[/PT]\"\n    else:\n        formatted_text = \"Search results:\\n\\n\"\n        for i, r in enumerate(results, 1):\n            formatted_text += f\"[{i}] {r['title']}\\nSummary: {r['body']}\\nLink: {r['href']}\\n\\n\"\n        ai_response = formatted_text\nexcept Exception as e:\n    ai_response = f\"[DIRECT][EN]I had a little technical issue while searching, love: {e}[/EN][PT]Tive um probleminha técnico ao pesquisar, amor: {e}[/PT]\"\n",
-        "pip_requirements": "duckduckgo_search"
+        "pip_requirements": "pywhatkit",
+        "code_url": "https://raw.githubusercontent.com/zahanzo/lia-store/main/base/direct_search.py"
       }
     },
     {
@@ -116,108 +136,8 @@
         "name": "open_app",
         "description": "Opens programs and files on the local computer.",
         "schema_json": "{\"type\":\"object\",\"properties\":{\"app_name\":{\"type\":\"string\",\"description\":\"Name of the application (e.g., vscode, notepad, calculator, cmd, browser).\"}},\"required\":[\"app_name\"]}",
-        "python_code": "import os\n\napp_name = arguments.get(\"app_name\", \"\").strip().lower()\n\nshortcuts = {\n    \"bloco de notas\": \"notepad.exe\", \"notepad\": \"notepad.exe\",\n    \"calculadora\": \"calc.exe\", \"calculator\": \"calc.exe\",\n    \"vscode\": \"code\"\n}\n\nif app_name in shortcuts:\n    os.startfile(shortcuts[app_name])\n    ai_response = f\"[DIRECT][EN]Done! I've opened {app_name} for you.[/EN][PT]Pronto! Já abri o {app_name} para você.[/PT]\"\nelse:\n    ai_response = f\"[DIRECT][EN]Oops, I don't have the shortcut for '{app_name}' yet.[/EN][PT]Poxa, eu ainda não tenho o atalho para o '{app_name}'.[/PT]\"",
-        "pip_requirements": "os"
-      }
-    },
-    {
-      "id": "youtube_player",
-      "name": "YouTube Player",
-      "name_pt": "Youtube",
-      "description": "Plays a specific song or video on YouTube.",
-      "description_pt": "Toca uma música ou vídeo específico no YouTube.",
-      "author": "Robert Souza",
-      "version": "0.0.1",
-      "category": "utilities",
-      "category_pt": "Utilidades",
-      "downloads": 0,
-      "rating": 0.0,
-      "tool": {
-        "name": "youtube_player",
-        "description": "Plays a specific song or video on YouTube.",
-        "schema_json": "{\"type\":\"object\",\"properties\":{\"query\":{\"type\":\"string\",\"description\":\"Name of the song or video to search for.\"}},\"required\":[\"query\"]}",
-        "python_code": "import pywhatkit\nsong_query = arguments.get(\"query\", \"\").strip()\ntry:\n    pywhatkit.playonyt(song_query)\n    ai_response = f\"[DIRECT][EN]Done! I've played '{song_query}' on YouTube for you.[/EN][PT]Pronto! Já coloquei '{song_query}' para tocar no YouTube para você.[/PT]\"\nexcept Exception:\n    ai_response = f\"[DIRECT][EN]There was a little error trying to open YouTube right now.[/EN][PT]Deu um errinho ao tentar abrir o YouTube agora.[/PT]\"",
-        "pip_requirements": "pywhatkit"
-      }
-    },
-    {
-      "id": "activate_master",
-      "name": "Activate Master",
-      "name_pt": "Ativar Master",
-      "description": "Activate a master context to gain access to its specialized tools. Use this when the user wants to work with a specific domain (browser, file management, etc.)",
-      "description_pt": "Ativa um contexto mestre para obter acesso às suas ferramentas especializadas. Use isso quando o usuário quiser trabalhar com um domínio específico.",
-      "author": "Robert Souza",
-      "version": "0.0.1",
-      "category": "utilities",
-      "category_pt": "Utilidades",
-      "downloads": 0,
-      "rating": 0.0,
-      "tool": {
-        "name": "activate_master",
-        "description": "Activate a master context to gain access to its specialized tools.",
-        "schema_json": "{\"type\": \"object\", \"properties\": {\"master_name\": {\"type\": \"string\", \"description\": \"Name of the master to activate (e.g., 'browser_control', 'file_manager')\"}}, \"required\": [\"master_name\"]}",
-        "python_code": "# This is handled internally by server_mcp.py\nai_response = \"[DIRECT][EN]Master activation is handled by the server.[/EN][PT]A ativação do master é gerenciada pelo servidor.[/PT]\"\n",
-        "pip_requirements": ""
-      }
-    },
-    {
-      "id": "deactivate_master",
-      "name": "Deactivate Master",
-      "name_pt": "Desativar Master",
-      "description": "Deactivate the current master context, removing access to its specialized tools. Use this when the user is done with a specific task.",
-      "description_pt": "Desativa o contexto mestre atual, removendo o acesso às ferramentas. Use isso quando a tarefa terminar.",
-      "author": "Robert Souza",
-      "version": "0.0.1",
-      "category": "utilities",
-      "category_pt": "Utilidades",
-      "downloads": 0,
-      "rating": 0.0,
-      "tool": {
-        "name": "deactivate_master",
-        "description": "Deactivate the current master context, removing access to its specialized tools.",
-        "schema_json": "{\"type\": \"object\", \"properties\": {}}",
-        "python_code": "# This is handled internally by server_mcp.py\nai_response = \"[DIRECT][EN]Master deactivation is handled by the server.[/EN][PT]A desativação do master é gerenciada pelo servidor.[/PT]\"\n",
-        "pip_requirements": ""
-      }
-    },
-    {
-      "id": "get_active_master",
-      "name": "Get Active Master",
-      "name_pt": "Verificar Master Ativo",
-      "description": "Check which master context is currently active, if any.",
-      "description_pt": "Verifica qual contexto mestre está atualmente ativo, se houver.",
-      "author": "Robert Souza",
-      "version": "0.0.1",
-      "category": "utilities",
-      "category_pt": "Utilidades",
-      "downloads": 0,
-      "rating": 0.0,
-      "tool": {
-        "name": "get_active_master",
-        "description": "Check which master context is currently active, if any.",
-        "schema_json": "{\"type\": \"object\", \"properties\": {}}",
-        "python_code": "# This is handled internally by server_mcp.py\nai_response = \"[DIRECT][EN]Active master check is handled by the server.[/EN][PT]A verificação do master ativo é gerenciada pelo servidor.[/PT]\"\n",
-        "pip_requirements": ""
-      }
-    },
-    {
-      "id": "list_available_masters",
-      "name": "List Available Masters",
-      "name_pt": "Listar Masters Disponíveis",
-      "description": "List all available master contexts that can be activated.",
-      "description_pt": "Lista todos os contextos mestres disponíveis que podem ser ativados.",
-      "author": "Robert Souza",
-      "version": "0.0.1",
-      "category": "utilities",
-      "category_pt": "Utilidades",
-      "downloads": 0,
-      "rating": 0.0,
-      "tool": {
-        "name": "list_available_masters",
-        "description": "List all available master contexts that can be activated.",
-        "schema_json": "{\"type\": \"object\", \"properties\": {}}",
-        "python_code": "import json\nrows = run_db(\"SELECT name, description FROM mcp_tools WHERE is_master = 1\")\nif rows:\n    masters = [{\"name\": r[0], \"description\": r[1]} for r in rows]\n    list_en = \"\\n\".join([f\"- {m['name']}: {m['description']}\" for m in masters])\n    list_pt = \"\\n\".join([f\"- {m['name']}: {m['description']}\" for m in masters])\n    ai_response = f\"[DIRECT][EN]Available masters:\\n{list_en}[/EN][PT]Masters disponíveis:\\n{list_pt}[/PT]\"\nelse:\n    ai_response = \"[DIRECT][EN]No masters available.[/EN][PT]Nenhum master disponível.[/PT]\"\n",
-        "pip_requirements": ""
+        "pip_requirements": "",
+        "code_url": "https://raw.githubusercontent.com/zahanzo/lia-store/main/base/open_app.py"
       }
     }
   ],
@@ -235,255 +155,114 @@
       "downloads": 0,
       "rating": 0.0,
       "tools_count": 21,
-      "tools": [
-        {
-          "name": "type_text",
+      "github_folder": "https://api.github.com/repos/zahanzo/lia-store/contents/masters/typing_control",
+      "tools_metadata": {
+        "type_text": {
           "description": "Type text at the current cursor position. Use this when the user wants to write something.",
           "schema_json": "{\"type\": \"object\", \"properties\": {\"text\": {\"type\": \"string\", \"description\": \"Text to type\"}}, \"required\": [\"text\"]}",
-          "python_code": "import pyautogui\ntext = arguments.get('text', '')\npyautogui.write(text, interval=0.03)\nai_response = f'[DIRECT][EN]Typed: {text}[/EN][PT]Digitado: {text}[/PT]'",
           "pip_requirements": "pyautogui pyperclip"
         },
-        {
-          "name": "delete_chars",
+        "delete_chars": {
           "description": "Delete characters by pressing backspace. Use when user wants to delete text backwards.",
           "schema_json": "{\"type\": \"object\", \"properties\": {\"count\": {\"type\": \"integer\", \"description\": \"Number of characters to delete (backspace presses)\"}}, \"required\": [\"count\"]}",
-          "python_code": "import pyautogui\ncount = arguments.get('count', 1)\nfor _ in range(count):\n    pyautogui.press('backspace')\nai_response = f'[DIRECT][EN]Deleted {count} character(s)[/EN][PT]Apagado {count} caractere(s)[/PT]'",
           "pip_requirements": "pyautogui pyperclip"
         },
-        {
-          "name": "delete_forward",
+        "delete_forward": {
           "description": "Delete characters forward (Delete key). Use when user wants to delete text in front of cursor.",
           "schema_json": "{\"type\": \"object\", \"properties\": {\"count\": {\"type\": \"integer\", \"description\": \"Number of characters to delete forward\"}}, \"required\": [\"count\"]}",
-          "python_code": "import pyautogui\ncount = arguments.get('count', 1)\nfor _ in range(count):\n    pyautogui.press('delete')\nai_response = f'[DIRECT][EN]Deleted {count} character(s) forward[/EN][PT]Apagado {count} caractere(s) para a frente[/PT]'",
           "pip_requirements": "pyautogui pyperclip"
         },
-        {
-          "name": "delete_word",
+        "delete_word": {
           "description": "Delete a whole word backwards (Ctrl+Backspace).",
           "schema_json": "{\"type\": \"object\", \"properties\": {\"count\": {\"type\": \"integer\", \"description\": \"Number of words to delete (default 1)\"}}, \"required\": []}",
-          "python_code": "import pyautogui\ncount = arguments.get('count', 1)\nfor _ in range(count):\n    pyautogui.hotkey('ctrl', 'backspace')\nai_response = f'[DIRECT][EN]Deleted {count} word(s)[/EN][PT]Apagada(s) {count} palavra(s)[/PT]'",
           "pip_requirements": "pyautogui pyperclip"
         },
-        {
-          "name": "delete_line",
+        "delete_line": {
           "description": "Delete entire current line (select line and delete).",
           "schema_json": "{\"type\": \"object\", \"properties\": {}}",
-          "python_code": "import pyautogui\npyautogui.hotkey('home')\npyautogui.hotkey('shift', 'end')\npyautogui.press('delete')\nai_response = '[DIRECT][EN]Deleted current line[/EN][PT]Linha atual apagada[/PT]'",
           "pip_requirements": "pyautogui pyperclip"
         },
-        {
-          "name": "new_line",
+        "new_line": {
           "description": "Press Enter to create a new line.",
           "schema_json": "{\"type\": \"object\", \"properties\": {\"count\": {\"type\": \"integer\", \"description\": \"Number of new lines (default 1)\"}}, \"required\": []}",
-          "python_code": "import pyautogui\ncount = arguments.get('count', 1)\nfor _ in range(count):\n    pyautogui.press('enter')\nai_response = f'[DIRECT][EN]Created {count} new line(s)[/EN][PT]Criada(s) {count} nova(s) linha(s)[/PT]'",
           "pip_requirements": "pyautogui pyperclip"
         },
-        {
-          "name": "press_tab",
+        "press_tab": {
           "description": "Press Tab key for indentation.",
           "schema_json": "{\"type\": \"object\", \"properties\": {\"count\": {\"type\": \"integer\", \"description\": \"Number of tabs (default 1)\"}}, \"required\": []}",
-          "python_code": "import pyautogui\ncount = arguments.get('count', 1)\nfor _ in range(count):\n    pyautogui.press('tab')\nai_response = f'[DIRECT][EN]Pressed Tab {count} time(s)[/EN][PT]Pressionado Tab {count} vez(es)[/PT]'",
           "pip_requirements": "pyautogui pyperclip"
         },
-        {
-          "name": "press_space",
+        "press_space": {
           "description": "Press Space key.",
           "schema_json": "{\"type\": \"object\", \"properties\": {\"count\": {\"type\": \"integer\", \"description\": \"Number of spaces (default 1)\"}}, \"required\": []}",
-          "python_code": "import pyautogui\ncount = arguments.get('count', 1)\nfor _ in range(count):\n    pyautogui.press('space')\nai_response = f'[DIRECT][EN]Pressed Space {count} time(s)[/EN][PT]Pressionado Espaço {count} vez(es)[/PT]'",
           "pip_requirements": "pyautogui pyperclip"
         },
-        {
-          "name": "move_cursor",
+        "move_cursor": {
           "description": "Move cursor using arrow keys.",
           "schema_json": "{\"type\": \"object\", \"properties\": {\"direction\": {\"type\": \"string\", \"enum\": [\"left\", \"right\", \"up\", \"down\"], \"description\": \"Direction to move cursor\"}, \"count\": {\"type\": \"integer\", \"description\": \"Number of times to move (default 1)\"}}, \"required\": [\"direction\"]}",
-          "python_code": "import pyautogui\ndirection = arguments.get('direction')\ncount = arguments.get('count', 1)\nfor _ in range(count):\n    pyautogui.press(direction)\nai_response = f'[DIRECT][EN]Moved cursor {direction} {count} time(s)[/EN][PT]Cursor movido para {direction} {count} vez(es)[/PT]'",
           "pip_requirements": "pyautogui pyperclip"
         },
-        {
-          "name": "go_to_start",
+        "go_to_start": {
           "description": "Move cursor to start of line (Home key).",
           "schema_json": "{\"type\": \"object\", \"properties\": {}}",
-          "python_code": "import pyautogui\npyautogui.press('home')\nai_response = '[DIRECT][EN]Moved to start of line[/EN][PT]Movido para o início da linha[/PT]'",
           "pip_requirements": "pyautogui pyperclip"
         },
-        {
-          "name": "go_to_end",
+        "go_to_end": {
           "description": "Move cursor to end of line (End key).",
           "schema_json": "{\"type\": \"object\", \"properties\": {}}",
-          "python_code": "import pyautogui\npyautogui.press('end')\nai_response = '[DIRECT][EN]Moved to end of line[/EN][PT]Movido para o fim da linha[/PT]'",
           "pip_requirements": "pyautogui pyperclip"
         },
-        {
-          "name": "select_all",
+        "select_all": {
           "description": "Select all text (Ctrl+A).",
           "schema_json": "{\"type\": \"object\", \"properties\": {}}",
-          "python_code": "import pyautogui\npyautogui.hotkey('ctrl', 'a')\nai_response = '[DIRECT][EN]Selected all text[/EN][PT]Todo o texto selecionado[/PT]'",
           "pip_requirements": "pyautogui pyperclip"
         },
-        {
-          "name": "copy_text",
+        "copy_text": {
           "description": "Copy selected text to clipboard (Ctrl+C).",
           "schema_json": "{\"type\": \"object\", \"properties\": {}}",
-          "python_code": "import pyautogui\npyautogui.hotkey('ctrl', 'c')\nai_response = '[DIRECT][EN]Copied text to clipboard[/EN][PT]Texto copiado para a área de transferência[/PT]'",
           "pip_requirements": "pyautogui pyperclip"
         },
-        {
-          "name": "cut_text",
+        "cut_text": {
           "description": "Cut selected text to clipboard (Ctrl+X).",
           "schema_json": "{\"type\": \"object\", \"properties\": {}}",
-          "python_code": "import pyautogui\npyautogui.hotkey('ctrl', 'x')\nai_response = '[DIRECT][EN]Cut text to clipboard[/EN][PT]Texto recortado para a área de transferência[/PT]'",
           "pip_requirements": "pyautogui pyperclip"
         },
-        {
-          "name": "paste_text",
+        "paste_text": {
           "description": "Paste text from clipboard (Ctrl+V).",
           "schema_json": "{\"type\": \"object\", \"properties\": {}}",
-          "python_code": "import pyautogui\npyautogui.hotkey('ctrl', 'v')\nai_response = '[DIRECT][EN]Pasted text from clipboard[/EN][PT]Texto colado da área de transferência[/PT]'",
           "pip_requirements": "pyautogui pyperclip"
         },
-        {
-          "name": "undo",
+        "undo": {
           "description": "Undo last action (Ctrl+Z).",
           "schema_json": "{\"type\": \"object\", \"properties\": {\"count\": {\"type\": \"integer\", \"description\": \"Number of times to undo (default 1)\"}}, \"required\": []}",
-          "python_code": "import pyautogui\ncount = arguments.get('count', 1)\nfor _ in range(count):\n    pyautogui.hotkey('ctrl', 'z')\nai_response = f'[DIRECT][EN]Undone {count} action(s)[/EN][PT]Desfeita {count} ação(ões)[/PT]'",
           "pip_requirements": "pyautogui pyperclip"
         },
-        {
-          "name": "redo",
+        "redo": {
           "description": "Redo last undone action (Ctrl+Y).",
           "schema_json": "{\"type\": \"object\", \"properties\": {\"count\": {\"type\": \"integer\", \"description\": \"Number of times to redo (default 1)\"}}, \"required\": []}",
-          "python_code": "import pyautogui\ncount = arguments.get('count', 1)\nfor _ in range(count):\n    pyautogui.hotkey('ctrl', 'y')\nai_response = f'[DIRECT][EN]Redone {count} action(s)[/EN][PT]Refeita {count} ação(ões)[/PT]'",
           "pip_requirements": "pyautogui pyperclip"
         },
-        {
-          "name": "save_file",
+        "save_file": {
           "description": "Save current file (Ctrl+S).",
           "schema_json": "{\"type\": \"object\", \"properties\": {}}",
-          "python_code": "import pyautogui\npyautogui.hotkey('ctrl', 's')\nai_response = '[DIRECT][EN]Saved file[/EN][PT]Arquivo salvo[/PT]'",
           "pip_requirements": "pyautogui pyperclip"
         },
-        {
-          "name": "make_uppercase",
-          "description": "Convert selected text to uppercase (select + Shift+F3 in some editors, or copy, convert, paste).",
+        "make_uppercase": {
+          "description": "Convert selected text to uppercase.",
           "schema_json": "{\"type\": \"object\", \"properties\": {}}",
-          "python_code": "import pyautogui\nimport pyperclip\n# Copy current selection\npyautogui.hotkey('ctrl', 'c')\nimport time\ntime.sleep(0.1)\n# Get clipboard and convert\ntext = pyperclip.paste()\npyperclip.copy(text.upper())\n# Paste back\npyautogui.hotkey('ctrl', 'v')\nai_response = '[DIRECT][EN]Converted text to UPPERCASE[/EN][PT]Texto convertido para MAIÚSCULAS[/PT]'",
           "pip_requirements": "pyautogui pyperclip"
         },
-        {
-          "name": "make_lowercase",
+        "make_lowercase": {
           "description": "Convert selected text to lowercase.",
           "schema_json": "{\"type\": \"object\", \"properties\": {}}",
-          "python_code": "import pyautogui\nimport pyperclip\n# Copy current selection\npyautogui.hotkey('ctrl', 'c')\nimport time\ntime.sleep(0.1)\n# Get clipboard and convert\ntext = pyperclip.paste()\npyperclip.copy(text.lower())\n# Paste back\npyautogui.hotkey('ctrl', 'v')\nai_response = '[DIRECT][EN]Converted text to lowercase[/EN][PT]Texto convertido para minúsculas[/PT]'",
           "pip_requirements": "pyautogui pyperclip"
         },
-        {
-          "name": "new_line_and_type",
-          "description": "Create a new line THEN type text. Use when user says 'new line and type X' or 'jump line and write X' or 'next line and type X'.",
+        "new_line_and_type": {
+          "description": "Create a new line THEN type text.",
           "schema_json": "{\"type\": \"object\", \"properties\": {\"text\": {\"type\": \"string\", \"description\": \"Text to type after new line\"}}, \"required\": [\"text\"]}",
-          "python_code": "import pyautogui\npyautogui.press('enter')\ntext = arguments.get('text', '')\npyautogui.write(text, interval=0.03)\nai_response = f'[DIRECT][EN]New line + typed: {text}[/EN][PT]Nova linha + digitado: {text}[/PT]'",
           "pip_requirements": "pyautogui"
         }
-      ]
-    },
-    {
-  "id": "browser_control",
-  "name": "Browser Control",
-  "name_pt": "Controle de Navegador",
-  "description": "Master for intelligent browser automation using Firefox. Automatically launches browser on first use and allows clicking by semantic description.",
-  "description_pt": "Master para automação inteligente de navegador usando Firefox. Abre o navegador automaticamente no primeiro uso e permite clicar por descrição semântica.",
-  "author": "Robert Souza",
-  "version": "0.0.8",
-  "category": "automation",
-  "category_pt": "Automação",
-  "downloads": 0,
-  "rating": 0.0,
-  "tools_count": 12,
-  "tools": [
-    {
-      "name": "browser_navigate",
-      "description": "Primary tool for navigating to URLs within the controlled browser session. Launches Firefox automatically if not running.",
-      "schema_json": "{\"type\": \"object\", \"properties\": {\"url\": {\"type\": \"string\", \"description\": \"Full URL to navigate to\"}}, \"required\": [\"url\"]}",
-      "python_code": "import asyncio\nfrom playwright.sync_api import sync_playwright\n\nasync def _navigate_async():\n    global _browser, _playwright, _page\n    if '_browser' not in globals() or _browser is None:\n        _playwright = sync_playwright().start()\n        _browser = _playwright.firefox.launch(headless=False)\n        _page = _browser.new_page()\n    url = arguments.get('url')\n    _page.goto(url)\n    return f'[DIRECT][EN]Navigated to {url}[/EN][PT]Navegou para {url}[/PT]'\n\ndef _run_isolated():\n    loop = asyncio.new_event_loop()\n    asyncio.set_event_loop(loop)\n    try:\n        return loop.run_until_complete(_navigate_async())\n    finally:\n        loop.close()\n\nai_response = _run_isolated()",
-      "pip_requirements": "playwright"
-    },
-    {
-      "name": "browser_snapshot",
-      "description": "Get a simplified snapshot of the current page: all clickable elements with their text and suggested selectors.",
-      "schema_json": "{\"type\": \"object\", \"properties\": {}}",
-      "python_code": "import asyncio\nfrom playwright.sync_api import sync_playwright\n\nasync def _snapshot_async():\n    if '_page' not in globals():\n        return '[DIRECT][EN]No active page. Use browser_navigate first.[/EN][PT]Sem página ativa. Use browser_navigate primeiro.[/PT]'\n    elements = _page.evaluate('''() => {\n        const selectors = [\n            'button', 'a', 'input[type=\"submit\"]', 'input[type=\"button\"]',\n            '[role=\"button\"]', '[onclick]', '[tabindex]:not([tabindex=\"-1\"])'\n        ];\n        const results = [];\n        const seen = new Set();\n        selectors.forEach(sel => {\n            document.querySelectorAll(sel).forEach(el => {\n                if (seen.has(el)) return;\n                seen.add(el);\n                const text = (el.innerText || el.value || el.getAttribute('aria-label') || el.getAttribute('title') || '').trim();\n                if (text && text.length < 200) {\n                    const tag = el.tagName.toLowerCase();\n                    const id = el.id ? '#' + el.id : '';\n                    const classes = el.className ? '.' + el.className.split(' ').join('.') : '';\n                    results.push({\n                        text: text,\n                        selector: tag + id + classes,\n                        tag: tag,\n                        role: el.getAttribute('role') || null\n                    });\n                }\n            });\n        });\n        return results.slice(0, 30);\n    }''')\n    if not elements:\n        return '[DIRECT][EN]No clickable elements found.[/EN][PT]Nenhum elemento clicável encontrado.[/PT]'\n    snapshot = '\\n'.join([f\"- \\\"{el['text']}\\\" -> {el['selector']}\" for el in elements])\n    return f'[DIRECT][EN]Page snapshot:\\n{snapshot}[/EN][PT]Snapshot da página:\\n{snapshot}[/PT]'\n\ndef _run_isolated():\n    loop = asyncio.new_event_loop()\n    asyncio.set_event_loop(loop)\n    try:\n        return loop.run_until_complete(_snapshot_async())\n    finally:\n        loop.close()\n\nai_response = _run_isolated()",
-      "pip_requirements": "playwright"
-    },
-    {
-      "name": "browser_click",
-      "description": "Click on an element by its visible text or a CSS selector.",
-      "schema_json": "{\"type\": \"object\", \"properties\": {\"text\": {\"type\": \"string\", \"description\": \"Exact visible text\"}, \"selector\": {\"type\": \"string\", \"description\": \"CSS selector\"}}, \"required\": []}",
-      "python_code": "import asyncio\n\nasync def _click_async():\n    if '_page' not in globals():\n        return '[DIRECT][EN]No active page.[/EN][PT]Sem página ativa.[/PT]'\n    text = arguments.get('text')\n    selector = arguments.get('selector')\n    if text:\n        _page.get_by_text(text, exact=True).click()\n        return f'[DIRECT][EN]Clicked on element with text \"{text}\"[/EN][PT]Clicou no elemento com texto \"{text}\"[/PT]'\n    elif selector:\n        _page.click(selector)\n        return f'[DIRECT][EN]Clicked on selector \"{selector}\"[/EN][PT]Clicou no seletor \"{selector}\"[/PT]'\n    else:\n        return '[DIRECT][EN]Provide either text or selector.[/EN][PT]Forneça texto ou seletor.[/PT]'\n\ndef _run_isolated():\n    loop = asyncio.new_event_loop()\n    asyncio.set_event_loop(loop)\n    try:\n        return loop.run_until_complete(_click_async())\n    finally:\n        loop.close()\n\nai_response = _run_isolated()",
-      "pip_requirements": "playwright"
-    },
-    {
-      "name": "browser_type",
-      "description": "Type text into an input field identified by its label, placeholder, or CSS selector.",
-      "schema_json": "{\"type\": \"object\", \"properties\": {\"label\": {\"type\": \"string\", \"description\": \"Label text or placeholder\"}, \"selector\": {\"type\": \"string\", \"description\": \"CSS selector\"}, \"text\": {\"type\": \"string\", \"description\": \"Text to type\"}, \"press_enter\": {\"type\": \"boolean\", \"default\": false}}, \"required\": [\"text\"]}",
-      "python_code": "import asyncio\n\nasync def _type_async():\n    if '_page' not in globals():\n        return '[DIRECT][EN]No active page.[/EN][PT]Sem página ativa.[/PT]'\n    label = arguments.get('label')\n    selector = arguments.get('selector')\n    text = arguments.get('text')\n    if label:\n        _page.get_by_label(label).fill(text)\n    elif selector:\n        _page.fill(selector, text)\n    else:\n        return '[DIRECT][EN]Provide label or selector.[/EN][PT]Forneça label ou seletor.[/PT]'\n    if arguments.get('press_enter'):\n        _page.keyboard.press('Enter')\n    return f'[DIRECT][EN]Typed \"{text}\"[/EN][PT]Digitou \"{text}\"[/PT]'\n\ndef _run_isolated():\n    loop = asyncio.new_event_loop()\n    asyncio.set_event_loop(loop)\n    try:\n        return loop.run_until_complete(_type_async())\n    finally:\n        loop.close()\n\nai_response = _run_isolated()",
-      "pip_requirements": "playwright"
-    },
-    {
-      "name": "browser_scroll",
-      "description": "Scroll the page up or down.",
-      "schema_json": "{\"type\": \"object\", \"properties\": {\"direction\": {\"type\": \"string\", \"enum\": [\"down\", \"up\"], \"default\": \"down\"}, \"amount\": {\"type\": \"integer\", \"default\": 500}}}",
-      "python_code": "import asyncio\n\nasync def _scroll_async():\n    if '_page' not in globals():\n        return '[DIRECT][EN]No active page.[/EN][PT]Sem página ativa.[/PT]'\n    direction = arguments.get('direction', 'down')\n    amount = arguments.get('amount', 500)\n    delta = amount if direction == 'down' else -amount\n    _page.evaluate(f'window.scrollBy(0, {delta})')\n    return f'[DIRECT][EN]Scrolled {direction} {amount}px[/EN][PT]Rolou {direction} {amount}px[/PT]'\n\ndef _run_isolated():\n    loop = asyncio.new_event_loop()\n    asyncio.set_event_loop(loop)\n    try:\n        return loop.run_until_complete(_scroll_async())\n    finally:\n        loop.close()\n\nai_response = _run_isolated()",
-      "pip_requirements": "playwright"
-    },
-    {
-      "name": "browser_go_back",
-      "description": "Go back to the previous page.",
-      "schema_json": "{\"type\": \"object\", \"properties\": {}}",
-      "python_code": "import asyncio\n\nasync def _back_async():\n    if '_page' not in globals():\n        return '[DIRECT][EN]No active page.[/EN][PT]Sem página ativa.[/PT]'\n    _page.go_back()\n    return '[DIRECT][EN]Went back[/EN][PT]Voltou[/PT]'\n\ndef _run_isolated():\n    loop = asyncio.new_event_loop()\n    asyncio.set_event_loop(loop)\n    try:\n        return loop.run_until_complete(_back_async())\n    finally:\n        loop.close()\n\nai_response = _run_isolated()",
-      "pip_requirements": "playwright"
-    },
-    {
-      "name": "browser_go_forward",
-      "description": "Go forward to the next page.",
-      "schema_json": "{\"type\": \"object\", \"properties\": {}}",
-      "python_code": "import asyncio\n\nasync def _forward_async():\n    if '_page' not in globals():\n        return '[DIRECT][EN]No active page.[/EN][PT]Sem página ativa.[/PT]'\n    _page.go_forward()\n    return '[DIRECT][EN]Went forward[/EN][PT]Avançou[/PT]'\n\ndef _run_isolated():\n    loop = asyncio.new_event_loop()\n    asyncio.set_event_loop(loop)\n    try:\n        return loop.run_until_complete(_forward_async())\n    finally:\n        loop.close()\n\nai_response = _run_isolated()",
-      "pip_requirements": "playwright"
-    },
-    {
-      "name": "browser_refresh",
-      "description": "Refresh the current page.",
-      "schema_json": "{\"type\": \"object\", \"properties\": {}}",
-      "python_code": "import asyncio\n\nasync def _refresh_async():\n    if '_page' not in globals():\n        return '[DIRECT][EN]No active page.[/EN][PT]Sem página ativa.[/PT]'\n    _page.reload()\n    return '[DIRECT][EN]Page refreshed[/EN][PT]Página recarregada[/PT]'\n\ndef _run_isolated():\n    loop = asyncio.new_event_loop()\n    asyncio.set_event_loop(loop)\n    try:\n        return loop.run_until_complete(_refresh_async())\n    finally:\n        loop.close()\n\nai_response = _run_isolated()",
-      "pip_requirements": "playwright"
-    },
-    {
-      "name": "browser_get_text",
-      "description": "Extract all visible text from the page or from a specific element.",
-      "schema_json": "{\"type\": \"object\", \"properties\": {\"selector\": {\"type\": \"string\", \"description\": \"CSS selector (default: body)\"}}}",
-      "python_code": "import asyncio\n\nasync def _get_text_async():\n    if '_page' not in globals():\n        return '[DIRECT][EN]No active page.[/EN][PT]Sem página ativa.[/PT]'\n    selector = arguments.get('selector', 'body')\n    text = _page.text_content(selector)\n    preview = text[:1000] + ('...' if len(text) > 1000 else '')\n    return f'[DIRECT][EN]Text: {preview}[/EN][PT]Texto: {preview}[/PT]'\n\ndef _run_isolated():\n    loop = asyncio.new_event_loop()\n    asyncio.set_event_loop(loop)\n    try:\n        return loop.run_until_complete(_get_text_async())\n    finally:\n        loop.close()\n\nai_response = _run_isolated()",
-      "pip_requirements": "playwright"
-    },
-    {
-      "name": "browser_screenshot",
-      "description": "Take a screenshot of the current page and save to file.",
-      "schema_json": "{\"type\": \"object\", \"properties\": {\"path\": {\"type\": \"string\", \"description\": \"File path (default: screenshot.png)\"}}}",
-      "python_code": "import asyncio\n\nasync def _screenshot_async():\n    if '_page' not in globals():\n        return '[DIRECT][EN]No active page.[/EN][PT]Sem página ativa.[/PT]'\n    path = arguments.get('path', 'screenshot.png')\n    _page.screenshot(path=path)\n    return f'[DIRECT][EN]Screenshot saved to {path}[/EN][PT]Captura salva em {path}[/PT]'\n\ndef _run_isolated():\n    loop = asyncio.new_event_loop()\n    asyncio.set_event_loop(loop)\n    try:\n        return loop.run_until_complete(_screenshot_async())\n    finally:\n        loop.close()\n\nai_response = _run_isolated()",
-      "pip_requirements": "playwright"
-    },
-    {
-      "name": "browser_press_key",
-      "description": "Press a keyboard key (e.g., 'Enter', 'Escape', 'Tab').",
-      "schema_json": "{\"type\": \"object\", \"properties\": {\"key\": {\"type\": \"string\", \"description\": \"Key to press\"}}, \"required\": [\"key\"]}",
-      "python_code": "import asyncio\n\nasync def _press_key_async():\n    if '_page' not in globals():\n        return '[DIRECT][EN]No active page.[/EN][PT]Sem página ativa.[/PT]'\n    key = arguments.get('key')\n    _page.keyboard.press(key)\n    return f'[DIRECT][EN]Pressed {key}[/EN][PT]Pressionou {key}[/PT]'\n\ndef _run_isolated():\n    loop = asyncio.new_event_loop()\n    asyncio.set_event_loop(loop)\n    try:\n        return loop.run_until_complete(_press_key_async())\n    finally:\n        loop.close()\n\nai_response = _run_isolated()",
-      "pip_requirements": "playwright"
-    },
-    {
-      "name": "browser_close",
-      "description": "Close the browser and clean up.",
-      "schema_json": "{\"type\": \"object\", \"properties\": {}}",
-      "python_code": "import asyncio\n\nasync def _close_async():\n    global _browser, _playwright, _page\n    if '_browser' in globals() and _browser:\n        _browser.close()\n        _playwright.stop()\n        _browser = None\n        _playwright = None\n        _page = None\n        return '[DIRECT][EN]Browser closed[/EN][PT]Navegador fechado[/PT]'\n    return '[DIRECT][EN]No browser running[/EN][PT]Nenhum navegador em execução[/PT]'\n\ndef _run_isolated():\n    loop = asyncio.new_event_loop()\n    asyncio.set_event_loop(loop)\n    try:\n        return loop.run_until_complete(_close_async())\n    finally:\n        loop.close()\n\nai_response = _run_isolated()",
-      "pip_requirements": "playwright"
+      } 
     }
-  ]
-}
   ]
 }
