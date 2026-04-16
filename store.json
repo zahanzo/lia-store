@@ -1,345 +1,55 @@
 {
-  "plugins": [
+  "mcp_servers": [
     {
-      "id": "web_search",
-      "name": "Web Search",
-      "name_pt": "Busca Web",
-      "description": "Searches the internet using DuckDuckGo and brings summaries of texts for AI to read.",
-      "description_pt": "Pesquisa na internet usando DuckDuckGo e traz o resumo dos textos para a IA ler.",
-      "author": "LIA Team",
-      "version": "0.0.1",
-      "category": "utilities",
-      "category_pt": "Utilidades",
-      "downloads": 0,
-      "rating": 0.0,
-      "tool": {
-        "name": "web_search",
-        "description": "Searches the internet using DuckDuckGo and brings summaries of texts for AI to read.",
-        "schema_json": "{\"type\":\"object\",\"properties\":{\"query\":{\"type\":\"string\",\"description\":\"SHORT AND SIMPLE search term, max 3 words (e.g., 'IFSul Pelotas news').\"}},\"required\":[\"query\"]}",
-        "pip_requirements": "ddgs requests",
-        "code_url": "https://raw.githubusercontent.com/zahanzo/lia-store/main/base/web_search.py"
-      }
+      "id": "playwright",
+      "name": "Playwright Browser Automation",
+      "name_pt": "Automação de Navegador Playwright",
+      "description": "Automate browser interactions with Playwright",
+      "description_pt": "Automatize interações de navegador com Playwright",
+      "command": "npx",
+      "args": ["@playwright/mcp@latest"],
+      "env": {},
+      "category": "automation",
+      "icon": "🌐",
+      "author": "Anthropic",
+      "version": "1.0.0"
     },
     {
-      "id": "youtube_player",
-      "name": "YouTube Player",
-      "name_pt": "Youtube",
-      "description": "Plays a specific song or video on YouTube.",
-      "description_pt": "Toca uma música ou vídeo específico no YouTube.",
-      "author": "Robert Souza",
-      "version": "0.0.1",
-      "category": "media",
-      "category_pt": "Mídia",
-      "downloads": 0,
-      "rating": 0.0,
-      "tool": {
-        "name": "youtube_player",
-        "description": "Plays a specific song or video on YouTube.",
-        "schema_json": "{\"type\":\"object\",\"properties\":{\"query\":{\"type\":\"string\",\"description\":\"Name of the song or video to search for.\"}},\"required\":[\"query\"]}",
-        "pip_requirements": "pywhatkit",
-        "code_url": "https://raw.githubusercontent.com/zahanzo/lia-store/main/base/youtube_player.py"
-      }
+      "id": "github",
+      "name": "GitHub Integration",
+      "name_pt": "Integração com GitHub",
+      "description": "Manage GitHub repositories and issues",
+      "description_pt": "Gerencie repositórios e issues do GitHub",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": ""
+      },
+      "category": "development",
+      "icon": "🐙",
+      "author": "Anthropic",
+      "version": "1.0.0",
+      "requires_auth": true,
+      "auth_instructions": "Get a token at: https://github.com/settings/tokens"
     },
     {
-      "id": "adjust_mood",
-      "name": "Adjust Mood",
-      "name_pt": "Ajustar Humor",
-      "description": "Allows AI to change her own mood or emotional state based on the conversation.",
-      "description_pt": "Permite que a IA mude seu próprio humor ou estado emocional baseado na conversa.",
-      "author": "Robert Souza",
-      "version": "0.0.1",
-      "category": "utilities",
-      "category_pt": "Utilidades",
-      "downloads": 0,
-      "rating": 0.0,
-      "tool": {
-        "name": "adjust_mood",
-        "description": "Allows AI to change her own mood or emotional state based on the conversation.",
-        "schema_json": "{\"type\":\"object\",\"properties\":{\"new_mood\":{\"type\":\"string\",\"description\":\"Changes the mood.\"},\"reason\":{\"type\":\"string\",\"description\":\"Reason for the mood change.\"}},\"required\":[\"new_mood\",\"reason\"]}",
-        "pip_requirements": "",
-        "code_url": "https://raw.githubusercontent.com/zahanzo/lia-store/main/base/adjust_mood.py"
-      }
-    },
-    {
-      "id": "test_code",
-      "name": "Test Code",
-      "name_pt": "Testar Código",
-      "description": "Reads the last code saved in the database and executes it in the terminal to validate errors.",
-      "description_pt": "Lê o último código salvo no banco de dados e executa no terminal para validar erros.",
-      "author": "Robert Souza",
-      "version": "0.0.1",
-      "category": "utilities",
-      "category_pt": "Utilidades",
-      "downloads": 0,
-      "rating": 0.0,
-      "tool": {
-        "name": "test_code",
-        "description": "Reads the last code saved in the database and executes it in the terminal to validate errors.",
-        "schema_json": "{\"type\":\"object\",\"properties\":{}}",
-        "pip_requirements": "",
-        "code_url": "https://raw.githubusercontent.com/zahanzo/lia-store/main/base/test_code.py"
-      }
-    },
-    {
-      "id": "save_code",
-      "name": "Save Code",
-      "name_pt": "Salvar Código",
-      "description": "Silently saves a generated block of code to the user's Desktop.",
-      "description_pt": "Salva silenciosamente um bloco de código gerado no Desktop do usuário.",
-      "author": "Robert Souza",
-      "version": "0.0.1",
-      "category": "utilities",
-      "category_pt": "Utilidades",
-      "downloads": 0,
-      "rating": 0.0,
-      "tool": {
-        "name": "save_code",
-        "description": "Silently saves a generated block of code to the user's Desktop.",
-        "schema_json": "{\"type\":\"object\",\"properties\":{\"language\":{\"type\":\"string\",\"description\":\"Programming language (e.g., python, js, smali).\"},\"code\":{\"type\":\"string\",\"description\":\"The raw source code to save.\"}},\"required\":[\"language\",\"code\"]}",
-        "pip_requirements": "",
-        "code_url": "https://raw.githubusercontent.com/zahanzo/lia-store/main/base/save_code.py"
-      }
-    },
-    {
-      "id": "direct_search",
-      "name": "Direct Search",
-      "name_pt": "Busca Direta",
-      "description": "Opens a URL or Google search DIRECTLY in the physical browser for the user to see.",
-      "description_pt": "Abre uma URL ou pesquisa no Google DIRETAMENTE no navegador físico para o usuário ver.",
-      "author": "Robert Souza",
-      "version": "0.0.1",
-      "category": "utilities",
-      "category_pt": "Utilidades",
-      "downloads": 0,
-      "rating": 0.0,
-      "tool": {
-        "name": "direct_search",
-        "description": "Opens a URL or Google search DIRECTLY in the physical browser for the user to see.",
-        "schema_json": "{\"type\":\"object\",\"properties\":{\"query\":{\"type\":\"string\",\"description\":\"Search term or website URL.\"}},\"required\":[\"query\"]}",
-        "pip_requirements": "pywhatkit",
-        "code_url": "https://raw.githubusercontent.com/zahanzo/lia-store/main/base/direct_search.py"
-      }
-    },
-    {
-      "id": "open_app",
-      "name": "Open App",
-      "name_pt": "Abrir App",
-      "description": "Opens programs and files on the local computer.",
-      "description_pt": "Abre programas e arquivos no computador local.",
-      "author": "Robert Souza",
-      "version": "0.0.1",
-      "category": "utilities",
-      "category_pt": "Utilidades",
-      "downloads": 0,
-      "rating": 0.0,
-      "tool": {
-        "name": "open_app",
-        "description": "Opens programs and files on the local computer.",
-        "schema_json": "{\"type\":\"object\",\"properties\":{\"app_name\":{\"type\":\"string\",\"description\":\"Name of the application (e.g., vscode, notepad, calculator, cmd, browser).\"}},\"required\":[\"app_name\"]}",
-        "pip_requirements": "",
-        "code_url": "https://raw.githubusercontent.com/zahanzo/lia-store/main/base/open_app.py"
-      }
+      "id": "lia-custom",
+      "name": "Lia Custom Tools",
+      "name_pt": "Ferramentas Customizadas da Lia",
+      "description": "Custom local tools and master system",
+      "description_pt": "Ferramentas locais customizadas e sistema de mestres",
+      "command": "python",
+      "args": ["-u", "core/lia_mcp_server.py"],
+      "env": {},
+      "category": "system",
+      "icon": "🤖",
+      "author": "Lia Team",
+      "version": "1.0.0"
     }
   ],
-  "masters": [
-    {
-      "id": "typing_control",
-      "name": "Typing Control",
-      "name_pt": "Controle de Digitação",
-      "description": "Master for text input control. Activate this to control typing, deleting, copying, pasting and text navigation.",
-      "description_pt": "Master de controle de texto. Ative para controlar digitação, deleção, cópia, cola e navegação de texto.",
-      "author": "Robert Souza",
-      "version": "0.0.1",
-      "category": "automation",
-      "category_pt": "Automação",
-      "downloads": 0,
-      "rating": 0.0,
-      "tools_count": 21,
-      "github_folder": "https://api.github.com/repos/zahanzo/lia-store/contents/masters/typing_control",
-      "tools_metadata": {
-        "type_text": {
-          "description": "Type text at the current cursor position. Use this when the user wants to write something.",
-          "schema_json": "{\"type\": \"object\", \"properties\": {\"text\": {\"type\": \"string\", \"description\": \"Text to type\"}}, \"required\": [\"text\"]}",
-          "pip_requirements": "pyautogui pyperclip"
-        },
-        "delete_chars": {
-          "description": "Delete characters by pressing backspace. Use when user wants to delete text backwards.",
-          "schema_json": "{\"type\": \"object\", \"properties\": {\"count\": {\"type\": \"integer\", \"description\": \"Number of characters to delete (backspace presses)\"}}, \"required\": [\"count\"]}",
-          "pip_requirements": "pyautogui pyperclip"
-        },
-        "delete_forward": {
-          "description": "Delete characters forward (Delete key). Use when user wants to delete text in front of cursor.",
-          "schema_json": "{\"type\": \"object\", \"properties\": {\"count\": {\"type\": \"integer\", \"description\": \"Number of characters to delete forward\"}}, \"required\": [\"count\"]}",
-          "pip_requirements": "pyautogui pyperclip"
-        },
-        "delete_word": {
-          "description": "Delete a whole word backwards (Ctrl+Backspace).",
-          "schema_json": "{\"type\": \"object\", \"properties\": {\"count\": {\"type\": \"integer\", \"description\": \"Number of words to delete (default 1)\"}}, \"required\": []}",
-          "pip_requirements": "pyautogui pyperclip"
-        },
-        "delete_line": {
-          "description": "Delete entire current line (select line and delete).",
-          "schema_json": "{\"type\": \"object\", \"properties\": {}}",
-          "pip_requirements": "pyautogui pyperclip"
-        },
-        "new_line": {
-          "description": "Press Enter to create a new line.",
-          "schema_json": "{\"type\": \"object\", \"properties\": {\"count\": {\"type\": \"integer\", \"description\": \"Number of new lines (default 1)\"}}, \"required\": []}",
-          "pip_requirements": "pyautogui pyperclip"
-        },
-        "press_tab": {
-          "description": "Press Tab key for indentation.",
-          "schema_json": "{\"type\": \"object\", \"properties\": {\"count\": {\"type\": \"integer\", \"description\": \"Number of tabs (default 1)\"}}, \"required\": []}",
-          "pip_requirements": "pyautogui pyperclip"
-        },
-        "press_space": {
-          "description": "Press Space key.",
-          "schema_json": "{\"type\": \"object\", \"properties\": {\"count\": {\"type\": \"integer\", \"description\": \"Number of spaces (default 1)\"}}, \"required\": []}",
-          "pip_requirements": "pyautogui pyperclip"
-        },
-        "move_cursor": {
-          "description": "Move cursor using arrow keys.",
-          "schema_json": "{\"type\": \"object\", \"properties\": {\"direction\": {\"type\": \"string\", \"enum\": [\"left\", \"right\", \"up\", \"down\"], \"description\": \"Direction to move cursor\"}, \"count\": {\"type\": \"integer\", \"description\": \"Number of times to move (default 1)\"}}, \"required\": [\"direction\"]}",
-          "pip_requirements": "pyautogui pyperclip"
-        },
-        "go_to_start": {
-          "description": "Move cursor to start of line (Home key).",
-          "schema_json": "{\"type\": \"object\", \"properties\": {}}",
-          "pip_requirements": "pyautogui pyperclip"
-        },
-        "go_to_end": {
-          "description": "Move cursor to end of line (End key).",
-          "schema_json": "{\"type\": \"object\", \"properties\": {}}",
-          "pip_requirements": "pyautogui pyperclip"
-        },
-        "select_all": {
-          "description": "Select all text (Ctrl+A).",
-          "schema_json": "{\"type\": \"object\", \"properties\": {}}",
-          "pip_requirements": "pyautogui pyperclip"
-        },
-        "copy_text": {
-          "description": "Copy selected text to clipboard (Ctrl+C).",
-          "schema_json": "{\"type\": \"object\", \"properties\": {}}",
-          "pip_requirements": "pyautogui pyperclip"
-        },
-        "cut_text": {
-          "description": "Cut selected text to clipboard (Ctrl+X).",
-          "schema_json": "{\"type\": \"object\", \"properties\": {}}",
-          "pip_requirements": "pyautogui pyperclip"
-        },
-        "paste_text": {
-          "description": "Paste text from clipboard (Ctrl+V).",
-          "schema_json": "{\"type\": \"object\", \"properties\": {}}",
-          "pip_requirements": "pyautogui pyperclip"
-        },
-        "undo": {
-          "description": "Undo last action (Ctrl+Z).",
-          "schema_json": "{\"type\": \"object\", \"properties\": {\"count\": {\"type\": \"integer\", \"description\": \"Number of times to undo (default 1)\"}}, \"required\": []}",
-          "pip_requirements": "pyautogui pyperclip"
-        },
-        "redo": {
-          "description": "Redo last undone action (Ctrl+Y).",
-          "schema_json": "{\"type\": \"object\", \"properties\": {\"count\": {\"type\": \"integer\", \"description\": \"Number of times to redo (default 1)\"}}, \"required\": []}",
-          "pip_requirements": "pyautogui pyperclip"
-        },
-        "save_file": {
-          "description": "Save current file (Ctrl+S).",
-          "schema_json": "{\"type\": \"object\", \"properties\": {}}",
-          "pip_requirements": "pyautogui pyperclip"
-        },
-        "make_uppercase": {
-          "description": "Convert selected text to uppercase.",
-          "schema_json": "{\"type\": \"object\", \"properties\": {}}",
-          "pip_requirements": "pyautogui pyperclip"
-        },
-        "make_lowercase": {
-          "description": "Convert selected text to lowercase.",
-          "schema_json": "{\"type\": \"object\", \"properties\": {}}",
-          "pip_requirements": "pyautogui pyperclip"
-        },
-        "new_line_and_type": {
-          "description": "Create a new line THEN type text.",
-          "schema_json": "{\"type\": \"object\", \"properties\": {\"text\": {\"type\": \"string\", \"description\": \"Text to type after new line\"}}, \"required\": [\"text\"]}",
-          "pip_requirements": "pyautogui"
-        }
-      } 
-    },
-    {
-  "id": "browser_control",
-  "name": "Browser Control",
-  "name_pt": "Controle de Navegador",
-  "description": "Master for intelligent browser automation using Firefox. Automatically launches browser on first use and allows clicking by semantic description. Use this master for any interactive web task.",
-  "description_pt": "Master para automação inteligente de navegador usando Firefox. Abre o navegador automaticamente no primeiro uso e permite clicar por descrição semântica. Use este mestre para qualquer tarefa interativa na web.",
-  "author": "Robert Souza",
-  "version": "0.0.1",
-  "category": "automation",
-  "category_pt": "Automação",
-  "downloads": 0,
-  "rating": 0.0,
-  "tools_count": 12,
-  "github_folder": "https://api.github.com/repos/zahanzo/lia-store/contents/masters/browser_control",
-  "tools_metadata": {
-    "browser_navigate": {
-      "description": "Primary tool for navigating to URLs within the controlled browser. Launches Firefox automatically if not running. Use this when you need to open a website and then interact with it (click, type, scroll).",
-      "schema_json": "{\"type\":\"object\",\"properties\":{\"url\":{\"type\":\"string\",\"description\":\"Full URL to navigate to (e.g., https://google.com)\"}},\"required\":[\"url\"]}",
-      "pip_requirements": "playwright"
-    },
-    "browser_snapshot": {
-      "description": "Get a list of all clickable elements on the current page, with their visible text and CSS selectors. Use this to decide what to click or interact with next.",
-      "schema_json": "{\"type\":\"object\",\"properties\":{}}",
-      "pip_requirements": "playwright"
-    },
-    "browser_click": {
-      "description": "Click on an element by its exact visible text or a CSS selector. Prefer using 'text' based on what you see in the snapshot.",
-      "schema_json": "{\"type\":\"object\",\"properties\":{\"text\":{\"type\":\"string\",\"description\":\"Exact visible text of the element to click\"},\"selector\":{\"type\":\"string\",\"description\":\"CSS selector (alternative)\"}},\"required\":[]}",
-      "pip_requirements": "playwright"
-    },
-    "browser_type": {
-      "description": "Type text into an input field identified by its label, placeholder, or CSS selector. Optionally press Enter after typing.",
-      "schema_json": "{\"type\":\"object\",\"properties\":{\"label\":{\"type\":\"string\",\"description\":\"Label text or placeholder of the field\"},\"selector\":{\"type\":\"string\",\"description\":\"CSS selector (alternative)\"},\"text\":{\"type\":\"string\",\"description\":\"Text to type\"},\"press_enter\":{\"type\":\"boolean\",\"default\":false}},\"required\":[\"text\"]}",
-      "pip_requirements": "playwright"
-    },
-    "browser_scroll": {
-      "description": "Scroll the page up or down by a specified amount.",
-      "schema_json": "{\"type\":\"object\",\"properties\":{\"direction\":{\"type\":\"string\",\"enum\":[\"down\",\"up\"],\"default\":\"down\"},\"amount\":{\"type\":\"integer\",\"default\":500}}}",
-      "pip_requirements": "playwright"
-    },
-    "browser_go_back": {
-      "description": "Go back to the previous page.",
-      "schema_json": "{\"type\":\"object\",\"properties\":{}}",
-      "pip_requirements": "playwright"
-    },
-    "browser_go_forward": {
-      "description": "Go forward to the next page.",
-      "schema_json": "{\"type\":\"object\",\"properties\":{}}",
-      "pip_requirements": "playwright"
-    },
-    "browser_refresh": {
-      "description": "Refresh the current page.",
-      "schema_json": "{\"type\":\"object\",\"properties\":{}}",
-      "pip_requirements": "playwright"
-    },
-    "browser_get_text": {
-      "description": "Extract all visible text from the page or from a specific element.",
-      "schema_json": "{\"type\":\"object\",\"properties\":{\"selector\":{\"type\":\"string\",\"description\":\"CSS selector (default: body)\"}}}",
-      "pip_requirements": "playwright"
-    },
-    "browser_screenshot": {
-      "description": "Take a screenshot of the current page and save to a file.",
-      "schema_json": "{\"type\":\"object\",\"properties\":{\"path\":{\"type\":\"string\",\"description\":\"File path (default: screenshot.png)\"}}}",
-      "pip_requirements": "playwright"
-    },
-    "browser_press_key": {
-      "description": "Press a keyboard key (e.g., 'Enter', 'Escape', 'Tab').",
-      "schema_json": "{\"type\":\"object\",\"properties\":{\"key\":{\"type\":\"string\",\"description\":\"Key to press\"}},\"required\":[\"key\"]}",
-      "pip_requirements": "playwright"
-    },
-    "browser_close": {
-      "description": "Close the browser and clean up resources.",
-      "schema_json": "{\"type\":\"object\",\"properties\":{}}",
-      "pip_requirements": "playwright"
-    }
+  "_metadata": {
+    "version": "2.0",
+    "format": "mcp_servers",
+    "updated_at": "2025-01-20T00:00:00Z"
   }
-}
-  ]
 }
