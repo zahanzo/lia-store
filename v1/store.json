@@ -1,0 +1,168 @@
+{
+  "plugins": [
+    {
+      "id": "web_search",
+      "name": "Web Search",
+      "name_pt": "Busca Web",
+      "description": "Searches the internet using DuckDuckGo and brings summaries of texts for AI to read.",
+      "description_pt": "Pesquisa na internet usando DuckDuckGo e traz o resumo dos textos para a IA ler.",
+      "author": "LIA Team",
+      "version": "0.0.1",
+      "category": "utilities",
+      "category_pt": "Utilidades",
+      "downloads": 0,
+      "rating": 0.0,
+      "tool": {
+        "name": "web_search",
+        "description": "Searches the internet using DuckDuckGo and brings summaries of texts for AI to read.",
+        "schema_json": "{\"type\":\"object\",\"properties\":{\"query\":{\"type\":\"string\",\"description\":\"SHORT AND SIMPLE search term, max 3 words (e.g., 'IFSul Pelotas news').\"}},\"required\":[\"query\"]}",
+        "pip_requirements": "ddgs requests",
+        "code_url": "https://raw.githubusercontent.com/zahanzo/lia-store/main/base/web_search.py"
+      }
+    },
+    {
+      "id": "youtube_player",
+      "name": "YouTube Player",
+      "name_pt": "Youtube",
+      "description": "Plays a specific song or video on YouTube.",
+      "description_pt": "Toca uma música ou vídeo específico no YouTube.",
+      "author": "Robert Souza",
+      "version": "0.0.1",
+      "category": "media",
+      "category_pt": "Mídia",
+      "downloads": 0,
+      "rating": 0.0,
+      "tool": {
+        "name": "youtube_player",
+        "description": "Plays a specific song or video on YouTube.",
+        "schema_json": "{\"type\":\"object\",\"properties\":{\"query\":{\"type\":\"string\",\"description\":\"Name of the song or video to search for.\"}},\"required\":[\"query\"]}",
+        "pip_requirements": "pywhatkit",
+        "code_url": "https://raw.githubusercontent.com/zahanzo/lia-store/main/base/youtube_player.py"
+      }
+    }
+  ],
+  "masters": [
+    {
+      "id": "typing_control",
+      "name": "Typing Control",
+      "name_pt": "Controle de Digitação",
+      "description": "Master for text input control. Activate this to control typing, deleting, copying, pasting and text navigation.",
+      "description_pt": "Master de controle de texto. Ative para controlar digitação, deleção, cópia, cola e navegação de texto.",
+      "author": "Robert Souza",
+      "version": "0.0.1",
+      "category": "automation",
+      "category_pt": "Automação",
+      "downloads": 0,
+      "rating": 5.0,
+      "tools_count": 21,
+      "github_folder": "https://api.github.com/repos/zahanzo/lia-store/contents/masters/typing_control",
+      "tools_metadata": {
+        "type_text": {
+          "description": "Type text at the current cursor position. Use this when the user wants to write something.",
+          "schema_json": "{\"type\": \"object\", \"properties\": {\"text\": {\"type\": \"string\", \"description\": \"Text to type\"}}, \"required\": [\"text\"]}",
+          "pip_requirements": "pyautogui pyperclip"
+        },
+        "delete_chars": {
+          "description": "Delete characters by pressing backspace. Use when user wants to delete text backwards.",
+          "schema_json": "{\"type\": \"object\", \"properties\": {\"count\": {\"type\": \"integer\", \"description\": \"Number of characters to delete (backspace presses)\"}}, \"required\": [\"count\"]}",
+          "pip_requirements": "pyautogui pyperclip"
+        },
+        "delete_forward": {
+          "description": "Delete characters forward (Delete key). Use when user wants to delete text in front of cursor.",
+          "schema_json": "{\"type\": \"object\", \"properties\": {\"count\": {\"type\": \"integer\", \"description\": \"Number of characters to delete forward\"}}, \"required\": [\"count\"]}",
+          "pip_requirements": "pyautogui pyperclip"
+        },
+        "delete_word": {
+          "description": "Delete a whole word backwards (Ctrl+Backspace).",
+          "schema_json": "{\"type\": \"object\", \"properties\": {\"count\": {\"type\": \"integer\", \"description\": \"Number of words to delete (default 1)\"}}, \"required\": []}",
+          "pip_requirements": "pyautogui pyperclip"
+        },
+        "delete_line": {
+          "description": "Delete entire current line (select line and delete).",
+          "schema_json": "{\"type\": \"object\", \"properties\": {}}",
+          "pip_requirements": "pyautogui pyperclip"
+        },
+        "new_line": {
+          "description": "Press Enter to create a new line.",
+          "schema_json": "{\"type\": \"object\", \"properties\": {\"count\": {\"type\": \"integer\", \"description\": \"Number of new lines (default 1)\"}}, \"required\": []}",
+          "pip_requirements": "pyautogui pyperclip"
+        },
+        "press_tab": {
+          "description": "Press Tab key for indentation.",
+          "schema_json": "{\"type\": \"object\", \"properties\": {\"count\": {\"type\": \"integer\", \"description\": \"Number of tabs (default 1)\"}}, \"required\": []}",
+          "pip_requirements": "pyautogui pyperclip"
+        },
+        "press_space": {
+          "description": "Press Space key.",
+          "schema_json": "{\"type\": \"object\", \"properties\": {\"count\": {\"type\": \"integer\", \"description\": \"Number of spaces (default 1)\"}}, \"required\": []}",
+          "pip_requirements": "pyautogui pyperclip"
+        },
+        "move_cursor": {
+          "description": "Move cursor using arrow keys.",
+          "schema_json": "{\"type\": \"object\", \"properties\": {\"direction\": {\"type\": \"string\", \"enum\": [\"left\", \"right\", \"up\", \"down\"], \"description\": \"Direction to move cursor\"}, \"count\": {\"type\": \"integer\", \"description\": \"Number of times to move (default 1)\"}}, \"required\": [\"direction\"]}",
+          "pip_requirements": "pyautogui pyperclip"
+        },
+        "go_to_start": {
+          "description": "Move cursor to start of line (Home key).",
+          "schema_json": "{\"type\": \"object\", \"properties\": {}}",
+          "pip_requirements": "pyautogui pyperclip"
+        },
+        "go_to_end": {
+          "description": "Move cursor to end of line (End key).",
+          "schema_json": "{\"type\": \"object\", \"properties\": {}}",
+          "pip_requirements": "pyautogui pyperclip"
+        },
+        "select_all": {
+          "description": "Select all text (Ctrl+A).",
+          "schema_json": "{\"type\": \"object\", \"properties\": {}}",
+          "pip_requirements": "pyautogui pyperclip"
+        },
+        "copy_text": {
+          "description": "Copy selected text to clipboard (Ctrl+C).",
+          "schema_json": "{\"type\": \"object\", \"properties\": {}}",
+          "pip_requirements": "pyautogui pyperclip"
+        },
+        "cut_text": {
+          "description": "Cut selected text to clipboard (Ctrl+X).",
+          "schema_json": "{\"type\": \"object\", \"properties\": {}}",
+          "pip_requirements": "pyautogui pyperclip"
+        },
+        "paste_text": {
+          "description": "Paste text from clipboard (Ctrl+V).",
+          "schema_json": "{\"type\": \"object\", \"properties\": {}}",
+          "pip_requirements": "pyautogui pyperclip"
+        },
+        "undo": {
+          "description": "Undo last action (Ctrl+Z).",
+          "schema_json": "{\"type\": \"object\", \"properties\": {\"count\": {\"type\": \"integer\", \"description\": \"Number of times to undo (default 1)\"}}, \"required\": []}",
+          "pip_requirements": "pyautogui pyperclip"
+        },
+        "redo": {
+          "description": "Redo last undone action (Ctrl+Y).",
+          "schema_json": "{\"type\": \"object\", \"properties\": {\"count\": {\"type\": \"integer\", \"description\": \"Number of times to redo (default 1)\"}}, \"required\": []}",
+          "pip_requirements": "pyautogui pyperclip"
+        },
+        "save_file": {
+          "description": "Save current file (Ctrl+S).",
+          "schema_json": "{\"type\": \"object\", \"properties\": {}}",
+          "pip_requirements": "pyautogui pyperclip"
+        },
+        "make_uppercase": {
+          "description": "Convert selected text to uppercase (select + Shift+F3 in some editors, or copy, convert, paste).",
+          "schema_json": "{\"type\": \"object\", \"properties\": {}}",
+          "pip_requirements": "pyautogui pyperclip"
+        },
+        "make_lowercase": {
+          "description": "Convert selected text to lowercase.",
+          "schema_json": "{\"type\": \"object\", \"properties\": {}}",
+          "pip_requirements": "pyautogui pyperclip"
+        },
+        "new_line_and_type": {
+          "description": "Create a new line THEN type text. Use when user says 'new line and type X' or 'jump line and write X' or 'next line and type X'.",
+          "schema_json": "{\"type\": \"object\", \"properties\": {\"text\": {\"type\": \"string\", \"description\": \"Text to type after new line\"}}, \"required\": [\"text\"]}",
+          "pip_requirements": "pyautogui"
+        }
+      }
+    }
+  ]
+}
