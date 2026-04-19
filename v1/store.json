@@ -6,7 +6,7 @@
       "name_pt": "Busca Web",
       "description": "Searches the internet using DuckDuckGo and brings summaries of texts for AI to read.",
       "description_pt": "Pesquisa na internet usando DuckDuckGo e traz o resumo dos textos para a IA ler.",
-      "author": "LIA Team",
+      "author": "Robert Souza",
       "version": "0.0.1",
       "category": "utilities",
       "category_pt": "Utilidades",
@@ -17,7 +17,7 @@
         "description": "Searches the internet using DuckDuckGo and brings summaries of texts for AI to read.",
         "schema_json": "{\"type\":\"object\",\"properties\":{\"query\":{\"type\":\"string\",\"description\":\"SHORT AND SIMPLE search term, max 3 words (e.g., 'IFSul Pelotas news').\"}},\"required\":[\"query\"]}",
         "pip_requirements": "ddgs requests",
-        "code_url": "https://raw.githubusercontent.com/zahanzo/lia-store/main/base/web_search.py"
+        "code_url": "https://raw.githubusercontent.com/zahanzo/lia-store/main/v1/base/web_search.py"
       }
     },
     {
@@ -37,7 +37,7 @@
         "description": "Plays a specific song or video on YouTube.",
         "schema_json": "{\"type\":\"object\",\"properties\":{\"query\":{\"type\":\"string\",\"description\":\"Name of the song or video to search for.\"}},\"required\":[\"query\"]}",
         "pip_requirements": "pywhatkit",
-        "code_url": "https://raw.githubusercontent.com/zahanzo/lia-store/main/base/youtube_player.py"
+        "code_url": "https://raw.githubusercontent.com/zahanzo/lia-store/main/v1/base/youtube_player.py"
       }
     }
   ],
@@ -55,7 +55,7 @@
       "downloads": 0,
       "rating": 5.0,
       "tools_count": 21,
-      "github_folder": "https://api.github.com/repos/zahanzo/lia-store/contents/masters/typing_control",
+      "github_folder": "https://api.github.com/repos/zahanzo/lia-store/contents/v1/masters/typing_control",
       "tools_metadata": {
         "type_text": {
           "description": "Type text at the current cursor position. Use this when the user wants to write something.",
